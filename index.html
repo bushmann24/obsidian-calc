@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obsidian Calculator</title>
+    <title>Obsidian Calc</title>
     <style>
         /* Mobile App Styling */
         :root {
             --obsidian-primary: #8b5cf6;
-            --bg: #0f172a; /* Dark theme to fit the 'Obsidian' vibe */
+            --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
             --label: #94a3b8;
@@ -42,7 +42,6 @@
             box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3);
         }
         .dashboard h1 { margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
-        .dashboard p { margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.9; }
 
         /* Calculator Card */
         .card {
@@ -131,12 +130,11 @@
 <div class="app-container">
     
     <div class="dashboard">
-        <h1>Obsidian Margin</h1>
-        <p>Live Card Flipping Calculator</p>
+        <h1>Obsidian Calc</h1>
     </div>
 
     <div class="card">
-        <label>Buy Price (Cash)</label>
+        <label>Buy Price</label>
         <input type="number" id="obsBuy" placeholder="$ 0.00" step="0.01" oninput="calculateObsidian()">
         
         <label>Collectr Value</label>
