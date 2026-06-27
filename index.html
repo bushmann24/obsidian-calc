@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Obsidian Calculator</title>
     
+    <!-- PWA & Mobile App Config -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -101,12 +102,17 @@
         
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); }
         .user-row button { background: var(--card); border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        
+        /* Flexbox for side-by-side buttons in the modal */
+        .modal-btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .modal-btn-group button { margin-top: 0; }
     </style>
 </head>
 <body>
 
 <div id="customAlert"></div>
 
+<!-- Login Modal -->
 <div class="modal-overlay" id="loginModal">
     <div class="card" style="width: 100%; max-width: 360px; margin: auto; text-align: center;">
         <h2 style="margin-top: 0; color: var(--obsidian-primary);">Obsidian Calculator</h2>
@@ -116,6 +122,7 @@
     </div>
 </div>
 
+<!-- Main App -->
 <div class="app-container" id="mainApp" style="display: none;">
     
     <div class="header-top">
@@ -126,11 +133,13 @@
         </div>
     </div>
 
+    <!-- Snooping Banner -->
     <div id="snoopBanner" class="viewing-banner" style="display: none;">
         <span>Viewing: <span id="snoopName"></span></span>
         <button onclick="resetViewToSelf()">Exit View</button>
     </div>
 
+    <!-- Live Calculator Card -->
     <div class="card" id="liveCalcCard">
         <label>Buy Price</label>
         <input type="number" id="calcBuy" placeholder="$0.00" step="0.01" oninput="runLiveCalc()">
@@ -147,6 +156,7 @@
         </div>
     </div>
 
+    <!-- Dashboard Analytics -->
     <div class="stats-grid">
         <div class="stat-box"><div class="stat-label">Invested</div><div class="stat-val" id="statInvested">$0.00</div></div>
         <div class="stat-box"><div class="stat-label">Payout</div><div class="stat-val" id="statPayout">$0.00</div></div>
@@ -154,6 +164,7 @@
         <div class="stat-box"><div class="stat-label">Cards Tracked</div><div class="stat-val" id="statCount">0</div></div>
     </div>
 
+    <!-- Inventory Section -->
     <div class="list-header">
         <div class="list-tabs">
             <button class="tab active" id="tabActive" onclick="setListTab('Active')">Active List</button>
@@ -164,6 +175,7 @@
     <div id="inventoryList"><p style="text-align: center; color: var(--label);">Loading cards...</p></div>
 </div>
 
+<!-- Modal: Add New Card -->
 <div class="modal-overlay" id="addModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
         <h3 style="margin-top: 0; color: white;">Log Card Purchase</h3>
@@ -181,6 +193,7 @@
     </div>
 </div>
 
+<!-- Modal: Edit My Item -->
 <div class="modal-overlay" id="actionModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
         <h3 id="actionTitle" style="margin-top: 0; color: white;">Manage Item</h3>
@@ -197,6 +210,7 @@
     </div>
 </div>
 
+<!-- Modal: View Only Receipt (Snooping Friend's Card) -->
 <div class="modal-overlay" id="viewReceiptModal">
     <div class="card" style="width: 100%; max-width: 360px; margin: auto; border-top: 4px solid #3b82f6;">
         <div style="display:flex; justify-content:space-between; color:var(--label); font-size:0.75rem; font-weight:bold;">
@@ -218,15 +232,22 @@
     </div>
 </div>
 
+<!-- Modal: Users Roster -->
 <div class="modal-overlay" id="usersModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto; max-height: 80vh; display: flex; flex-direction: column;">
         <h3 style="margin-top: 0; color: white;">Registered Users</h3>
         <p style="font-size: 0.8rem; color: var(--label); margin-top: -10px;">Select a user to view their vault.</p>
+        
         <div id="userRowsContainer" style="overflow-y: auto; flex: 1; margin: 10px 0;"></div>
-        <button class="action-btn cancel-btn" onclick="closeAllModals()">Close</button>
+        
+        <div class="modal-btn-group">
+            <button class="action-btn danger-btn" onclick="logoutUser()">Logout</button>
+            <button class="action-btn cancel-btn" onclick="closeAllModals()">Close</button>
+        </div>
     </div>
 </div>
 
+<!-- Firebase SDKs -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, setDoc, getDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
@@ -275,6 +296,11 @@
             document.getElementById('mainApp').style.display = 'block';
             showAlert(`Welcome, ${raw}`);
         } catch(e) { showAlert("Connection error"); }
+    };
+
+    window.logoutUser = () => {
+        localStorage.removeItem('obsidian_username');
+        window.location.reload();
     };
 
     window.runLiveCalc = () => {
@@ -501,6 +527,7 @@
 
 </script>
 
+<!-- Chrome Android Service Worker Hook -->
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js');
