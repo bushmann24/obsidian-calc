@@ -9,10 +9,12 @@
             --obsidian-primary: #8b5cf6;
             --bg: #0f172a;
             --card: #1e293b;
+            --card-hover: #27354f;
             --text: #f8fafc;
             --label: #94a3b8;
             --success: #10b981;
             --danger: #ef4444;
+            --border: #334155;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -24,140 +26,80 @@
             justify-content: center;
             min-height: 100vh;
         }
-        .app-container { width: 100%; max-width: 450px; padding-bottom: 50px; }
+        .app-container { width: 100%; max-width: 450px; padding-bottom: 60px; position: relative; }
         
-        /* Header & Plus Button */
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+        /* Header & Icons */
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .header-top h1 { color: var(--obsidian-primary); margin: 0; font-size: 1.6rem; }
-        .add-btn {
-            width: 40px;
-            height: 40px;
-            background: var(--obsidian-primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .header-actions { display: flex; gap: 8px; }
+        .icon-btn {
+            width: 40px; height: 40px; background: var(--card); color: var(--text); border: 1px solid var(--border);
+            border-radius: 8px; font-size: 18px; cursor: pointer; display: flex; justify-content: center; align-items: center;
         }
-        
-        .card {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        .icon-btn.primary { background: var(--obsidian-primary); border-color: var(--obsidian-primary); }
+
+        /* Viewing Banner */
+        .viewing-banner {
+            background: #3b82f6; color: white; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
         }
-        label { display: block; font-size: 0.85rem; color: var(--label); margin: 15px 0 5px 0; font-weight: bold; text-transform: uppercase; }
+        .viewing-banner button { background: rgba(0,0,0,0.2); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+
+        /* Cards & Inputs */
+        .card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
+        label { display: block; font-size: 0.8rem; color: var(--label); margin: 12px 0 6px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
         label:first-child { margin-top: 0; }
         
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            background: var(--bg);
-            color: white;
-            font-size: 1.1rem;
-            box-sizing: border-box;
-            font-weight: 600;
-        }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: white; font-size: 1.05rem; box-sizing: border-box; font-weight: 600; }
         input:focus { outline: none; border-color: var(--obsidian-primary); }
         
-        .live-math {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px dashed #334155;
-        }
+        /* Dashboard Stats Grid */
+        .stats-grid { display: grid; grid-cols-2; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .stat-label { font-size: 0.7rem; color: var(--label); text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
+        .stat-val { font-size: 1.2rem; font-weight: 800; color: white; }
+
+        /* Live Calc Previews */
+        .live-math { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 12px; border-top: 1px dashed var(--border); }
         .math-stat { color: var(--label); font-size: 0.9rem; font-weight: 600; }
-        .math-val { font-size: 1.2rem; font-weight: bold; color: white; }
+        .math-val { font-size: 1.15rem; font-weight: bold; color: white; }
         
-        .profit-container { text-align: right; margin-top: 15px; }
-        .profit-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--label); font-weight: 700; margin-bottom: 5px; }
-        .profit-val { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; }
+        .profit-container { text-align: right; margin-top: 12px; }
+        .profit-label { font-size: 0.75rem; text-transform: uppercase; color: var(--label); font-weight: 700; margin-bottom: 2px; }
+        .profit-val { font-size: 2.2rem; font-weight: 900; }
         .profit-val.positive { color: var(--success); }
         .profit-val.negative { color: var(--danger); }
         .profit-val.neutral { color: white; }
-        
-        button.action-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--obsidian-primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-top: 25px;
-            cursor: pointer;
-        }
-        button.cancel-btn { background: #334155; margin-top: 10px; }
-        
-        /* Modal Overlays */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
 
-        /* Custom Alert Notification */
-        #customAlert {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--obsidian-primary);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            font-weight: bold;
-            z-index: 2000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            text-align: center;
-            min-width: 200px;
-        }
+        /* Buttons */
+        button.action-btn { width: 100%; padding: 14px; background: var(--obsidian-primary); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        button.cancel-btn { background: var(--border); margin-top: 8px; }
+        button.danger-btn { background: var(--danger); margin-top: 8px; }
+        button.success-btn { background: var(--success); color: #0f172a; margin-top: 8px; }
 
-        /* The Vault List */
-        .vault-title { font-size: 1.2rem; color: var(--label); border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; font-weight: 600;}
-        .vault-item {
-            background: #151e2e;
-            border-left: 4px solid var(--obsidian-primary);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-        .item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .item-name { font-weight: bold; font-size: 1.1rem; }
-        .item-buyer { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 12px; color: #cbd5e1; }
+        /* List Tabs & Items */
+        .list-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px; }
+        .list-tabs { display: flex; gap: 10px; }
+        .tab { background: none; border: none; color: var(--label); font-size: 0.95rem; font-weight: bold; cursor: pointer; padding: 0 4px 4px 4px; }
+        .tab.active { color: var(--obsidian-primary); border-bottom: 2px solid var(--obsidian-primary); }
+
+        .vault-item { background: #151e2e; border-left: 4px solid var(--obsidian-primary); padding: 14px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: background 0.15s; }
+        .vault-item:active { background: var(--card-hover); }
+        .vault-item.sold-item { border-left-color: var(--success); opacity: 0.75; }
         
-        .item-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--label); margin-bottom: 4px; }
-        .item-row span:last-child { color: white; font-weight: bold; }
-        .item-profit { font-size: 1.2rem; font-weight: bold; text-align: right; margin-top: 10px; }
+        .item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .item-name { font-weight: bold; font-size: 1.05rem; }
+        .item-date { font-size: 0.75rem; color: var(--label); }
+        .item-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--label); margin-bottom: 3px; }
+        .item-row span:last-child { color: white; font-weight: 600; }
+        .item-profit { font-size: 1.1rem; font-weight: bold; text-align: right; margin-top: 8px; }
+
+        /* Overlays */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        #customAlert { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--obsidian-primary); color: white; padding: 12px 20px; border-radius: 8px; font-weight: bold; z-index: 2000; box-shadow: 0 4px 6px rgba(0,0,0,0.3); text-align: center; }
         
-        .status-toggle {
-            background: transparent; border: 1px solid var(--label); color: var(--label);
-            padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; width: auto; margin-top: 10px;
-            cursor: pointer; font-weight: 600;
-        }
-        .status-toggle.sold { background: var(--success); color: #0f172a; border: none; }
+        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); }
+        .user-row button { background: var(--card); border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -165,69 +107,122 @@
 <div id="customAlert"></div>
 
 <div class="modal-overlay" id="loginModal">
-    <div class="card" style="width: 100%; max-width: 380px; margin: auto; text-align: center;">
+    <div class="card" style="width: 100%; max-width: 360px; margin: auto; text-align: center;">
         <h2 style="margin-top: 0; color: var(--obsidian-primary);">Obsidian Calculator</h2>
-        <p style="color: var(--label); font-size: 0.9rem; margin-bottom: 20px;">Username Below</p>
-        
+        <p style="color: var(--label); font-size: 0.85rem; margin-bottom: 15px;">Username Below</p>
         <input type="text" id="usernameInput" placeholder="Username" style="text-align: center;">
         <button class="action-btn" id="loginBtn" onclick="handleLogin()">Login</button>
     </div>
 </div>
 
 <div class="app-container" id="mainApp" style="display: none;">
+    
     <div class="header-top">
         <h1>Obsidian Calculator</h1>
-        <button class="add-btn" onclick="openModal()">+</button>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="openUsersModal()">⚙️</button>
+            <button class="icon-btn primary" onclick="openAddModal()">+</button>
+        </div>
+    </div>
+
+    <div id="snoopBanner" class="viewing-banner" style="display: none;">
+        <span>Viewing: <span id="snoopName"></span></span>
+        <button onclick="resetViewToSelf()">Exit View</button>
     </div>
 
     <div class="card">
         <label>Buy Price</label>
-        <input type="number" id="buyPrice" placeholder="$0.00" step="0.01" oninput="calculate()">
-        
+        <input type="number" id="calcBuy" placeholder="$0.00" step="0.01" oninput="runLiveCalc()">
         <label>Collectr Value</label>
-        <input type="number" id="collectrPrice" placeholder="$0.00" step="0.01" oninput="calculate()">
+        <input type="number" id="calcCollectr" placeholder="$0.00" step="0.01" oninput="runLiveCalc()">
 
         <div class="live-math">
             <span class="math-stat">Obsidian Payout (85%)</span>
             <span class="math-val" id="previewPayout">$0.00</span>
         </div>
-        
         <div class="profit-container">
             <div class="profit-label">Net Profit</div>
             <div class="profit-val neutral" id="previewProfit">$0.00</div>
         </div>
     </div>
 
-    <div class="vault-title">Collection</div>
-    <div id="vaultList">
-        <p style="text-align: center; color: #334155;">Loading data...</p>
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-label">Invested Capital</div>
+            <div class="stat-val" id="statInvested">$0.00</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Expected Payout</div>
+            <div class="stat-val" id="statPayout">$0.00</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Projected Profit</div>
+            <div class="stat-val" id="statProfit" style="color: var(--success);">$0.00</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Cards Tracked</div>
+            <div class="stat-val" id="statCount">0</div>
+        </div>
     </div>
+
+    <div class="list-header">
+        <div class="list-tabs">
+            <button class="tab active" id="tabActive" onclick="setListTab('Active')">Active List</button>
+            <button class="tab" id="tabSold" onclick="setListTab('Sold')">Sold History</button>
+        </div>
+        <span style="font-size: 0.75rem; color: var(--label); font-style: italic;">Tap item to edit</span>
+    </div>
+    <div id="inventoryList"><p style="text-align: center; color: var(--label);">Loading cards...</p></div>
 </div>
 
 <div class="modal-overlay" id="addModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
-        <h2 style="margin-top: 0; color: white;">Add to List</h2>
-        
+        <h3 style="margin-top: 0; color: white;">Log Card Purchase</h3>
         <label>Purchase Date</label>
-        <input type="date" id="modalDate">
-
+        <input type="date" id="addDate">
         <label>Item Name</label>
-        <input type="text" id="modalName" placeholder="e.g. Charizard">
-        
+        <input type="text" id="addName" placeholder="e.g. Charizard Ex">
         <label>Buy Price</label>
-        <input type="number" id="modalBuy" placeholder="$0.00" step="0.01">
-
+        <input type="number" id="addBuy" placeholder="$0.00" step="0.01">
         <label>Collectr Value</label>
-        <input type="number" id="modalCollectr" placeholder="$0.00" step="0.01">
+        <input type="number" id="addCollectr" placeholder="$0.00" step="0.01">
         
-        <button class="action-btn" onclick="logToVault()">Add to List</button>
-        <button class="action-btn cancel-btn" onclick="closeModal()">Cancel</button>
+        <button class="action-btn" onclick="saveNewCard()">Save to Inventory</button>
+        <button class="action-btn cancel-btn" onclick="closeAllModals()">Cancel</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="actionModal">
+    <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
+        <h3 id="actionTitle" style="margin-top: 0; color: white;">Manage Item</h3>
+        <input type="hidden" id="actionId">
+        
+        <label>Item Name</label>
+        <input type="text" id="editName">
+        <label>Buy Price</label>
+        <input type="number" id="editBuy" step="0.01">
+        <label>Collectr Value</label>
+        <input type="number" id="editCollectr" step="0.01">
+
+        <button class="action-btn" id="sellActionBtn" onclick="markItemSold()" style="display:none; background:#10b981; color:#0f172a;">Confirm Sale</button>
+        <button class="action-btn" onclick="updateCardDetails()">Update Prices</button>
+        <button class="action-btn danger-btn" onclick="deleteCardRecord()">Delete Record</button>
+        <button class="action-btn cancel-btn" onclick="closeAllModals()">Cancel</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="usersModal">
+    <div class="card" style="width: 100%; max-width: 380px; margin: auto; max-height: 80vh; display: flex; flex-direction: column;">
+        <h3 style="margin-top: 0; color: white;">Registered Users</h3>
+        <p style="font-size: 0.8rem; color: var(--label); margin-top: -10px;">Select a user to view their personal vault.</p>
+        <div id="userRowsContainer" style="overflow-y: auto; flex: 1; margin: 10px 0;"></div>
+        <button class="action-btn cancel-btn" onclick="closeAllModals()">Close</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, setDoc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, setDoc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAFBXf5X9_F8EzO7jj4zW8WIbOC3LIJHO8",
@@ -240,183 +235,238 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const vaultCollection = collection(db, "obsidian_cards");
+    const cardsRef = collection(db, "obsidian_cards");
+    const usersRef = collection(db, "obsidian_users");
 
-    // --- CUSTOM ALERT LOGIC ---
-    let alertTimeout;
-    window.showAlert = function(message) {
-        const alertBox = document.getElementById('customAlert');
-        alertBox.innerText = message;
-        alertBox.style.display = 'block';
-        clearTimeout(alertTimeout);
-        alertTimeout = setTimeout(() => {
-            alertBox.style.display = 'none';
-        }, 3000);
+    // --- STATE ---
+    let myUser = localStorage.getItem('obsidian_username');
+    let viewingUser = myUser; // Defaults to viewing yourself
+    let currentTab = 'Active'; // 'Active' or 'Sold'
+    let allCardsMemory = [];
+    let alertTimer;
+
+    window.showAlert = (msg) => {
+        const el = document.getElementById('customAlert');
+        el.innerText = msg; el.style.display = 'block';
+        clearTimeout(alertTimer);
+        alertTimer = setTimeout(() => el.style.display = 'none', 2500);
     };
 
-    // --- USER LOGIN LOGIC ---
-    let currentUser = localStorage.getItem('obsidian_username');
+    // --- INIT AUTH ---
+    if (myUser) { viewingUser = myUser; document.getElementById('mainApp').style.display = 'block'; }
+    else document.getElementById('loginModal').style.display = 'flex';
 
-    if (currentUser) {
-        document.getElementById('mainApp').style.display = 'block';
-    } else {
-        document.getElementById('loginModal').style.display = 'flex';
-    }
-
-    window.handleLogin = async function() {
-        const inputName = document.getElementById('usernameInput').value.trim();
-        if (!inputName) return showAlert("Please enter a username");
-
-        const btn = document.getElementById('loginBtn');
-        btn.innerText = "Loading...";
-
-        const userKey = inputName.toLowerCase();
-        const userRef = doc(db, "obsidian_users", userKey);
+    window.handleLogin = async () => {
+        const raw = document.getElementById('usernameInput').value.trim();
+        if (!raw) return showAlert("Enter a username");
+        const clean = raw.toLowerCase();
         
         try {
-            const userDoc = await getDoc(userRef);
-            
-            if (userDoc.exists()) {
-                showAlert(`Welcome back, ${inputName}`);
-            } else {
-                await setDoc(userRef, {
-                    username: inputName,
-                    registeredAt: Date.now()
-                });
-                showAlert(`Registered user: ${inputName}`);
-            }
-
-            localStorage.setItem('obsidian_username', inputName);
-            currentUser = inputName;
-            
+            const uDoc = await getDoc(doc(db, "obsidian_users", clean));
+            if (!uDoc.exists()) await setDoc(doc(db, "obsidian_users", clean), { display: raw, created: Date.now() });
+            localStorage.setItem('obsidian_username', clean);
+            myUser = clean; viewingUser = clean;
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-
-        } catch (error) {
-            showAlert("Connection error");
-            btn.innerText = "Login";
-        }
+            showAlert(`Welcome, ${raw}`);
+        } catch(e) { showAlert("Connection error"); }
     };
 
-    // --- LIVE CALCULATOR LOGIC ---
-    window.calculate = function() {
-        const buyInput = document.getElementById('buyPrice').value;
-        const collectrInput = document.getElementById('collectrPrice').value;
-
-        const buy = parseFloat(buyInput) || 0;
-        const collectr = parseFloat(collectrInput) || 0;
-        
-        const payout = collectr * 0.85;
-        const profit = payout - buy;
-
-        document.getElementById('previewPayout').innerText = `$${payout.toFixed(2)}`;
-        
-        const profitEl = document.getElementById('previewProfit');
-        
-        if (!buyInput && !collectrInput) {
-            profitEl.className = 'profit-val neutral';
-            profitEl.innerText = '$0.00';
-            return;
-        }
-
-        const isPositive = profit >= 0;
-        profitEl.className = `profit-val ${isPositive ? 'positive' : 'negative'}`;
-        profitEl.innerText = `${isPositive ? '+' : '-'}$${Math.abs(profit).toFixed(2)}`;
+    // --- LIVE CALC ---
+    window.runLiveCalc = () => {
+        const b = parseFloat(document.getElementById('calcBuy').value) || 0;
+        const c = parseFloat(document.getElementById('calcCollectr').value) || 0;
+        const p = c * 0.85; const pr = p - b;
+        document.getElementById('previewPayout').innerText = `$${p.toFixed(2)}`;
+        const prEl = document.getElementById('previewProfit');
+        if (!b && !c) { prEl.className = 'profit-val neutral'; prEl.innerText = '$0.00'; return; }
+        prEl.className = `profit-val ${pr >= 0 ? 'positive' : 'negative'}`;
+        prEl.innerText = `${pr >= 0 ? '+' : '-'}$${Math.abs(pr).toFixed(2)}`;
     };
 
-    // --- MODAL LOGIC FOR ADDING CARDS ---
-    window.openModal = function() {
+    // --- MODAL CONTROLS ---
+    window.closeAllModals = () => {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    };
+
+    window.openAddModal = () => {
         document.getElementById('addModal').style.display = 'flex';
-        // Set date input to today by default
-        document.getElementById('modalDate').valueAsDate = new Date();
+        document.getElementById('addDate').valueAsDate = new Date();
     };
 
-    window.closeModal = function() {
-        document.getElementById('addModal').style.display = 'none';
-        document.getElementById('modalName').value = '';
-        document.getElementById('modalBuy').value = '';
-        document.getElementById('modalCollectr').value = '';
-    };
+    // --- CRUD: ADD ---
+    window.saveNewCard = async () => {
+        const dt = document.getElementById('addDate').value;
+        const nm = document.getElementById('addName').value.trim();
+        const b = parseFloat(document.getElementById('addBuy').value);
+        const c = parseFloat(document.getElementById('addCollectr').value);
 
-    // --- ADD CARD TO FIREBASE ---
-    window.logToVault = async function() {
-        const date = document.getElementById('modalDate').value;
-        const name = document.getElementById('modalName').value.trim();
-        const buyInput = document.getElementById('modalBuy').value;
-        const collectrInput = document.getElementById('modalCollectr').value;
+        if (!dt || !nm || isNaN(b) || isNaN(c)) return showAlert("Fill out all fields");
 
-        if (!date || !name || !buyInput || !collectrInput) {
-            return showAlert("Please fill out all fields");
-        }
-
-        const buy = parseFloat(buyInput);
-        const collectr = parseFloat(collectrInput);
-        const payout = collectr * 0.85;
-        const profit = payout - buy;
-
-        await addDoc(vaultCollection, {
-            name: name,
-            buyPrice: buy,
-            collectrPrice: collectr,
-            payout: payout,
-            profit: profit,
-            buyer: currentUser,
-            status: "In Hand",
-            dateAdded: date,
-            timestamp: Date.now()
+        await addDoc(cardsRef, {
+            name: nm, buyPrice: b, collectrPrice: c,
+            payout: c * 0.85, profit: (c * 0.85) - b,
+            owner: myUser, status: "Active",
+            date: dt, ts: Date.now()
         });
 
-        closeModal();
-        showAlert("Added to list");
+        closeAllModals(); showAlert("Card saved");
+        document.getElementById('addName').value = ''; document.getElementById('addBuy').value = ''; document.getElementById('addCollectr').value = '';
     };
 
-    // --- REAL-TIME SYNC (READ CARDS FROM FIREBASE) ---
-    const q = query(vaultCollection, orderBy("timestamp", "desc"));
-    
-    onSnapshot(q, (snapshot) => {
-        const listEl = document.getElementById('vaultList');
-        listEl.innerHTML = ''; 
+    // --- SYNC & RENDER ENGINE ---
+    onSnapshot(query(cardsRef, orderBy("ts", "desc")), (snap) => {
+        allCardsMemory = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        processAndRender();
+    });
 
-        if (snapshot.empty) {
-            listEl.innerHTML = '<p style="text-align:center; color:#64748b;">List is empty.</p>';
+    window.setListTab = (tab) => {
+        currentTab = tab;
+        document.getElementById('tabActive').className = tab === 'Active' ? 'tab active' : 'tab';
+        document.getElementById('tabSold').className = tab === 'Sold' ? 'tab active' : 'tab';
+        processAndRender();
+    };
+
+    function processAndRender() {
+        const listEl = document.getElementById('inventoryList');
+        listEl.innerHTML = '';
+
+        // 1. Filter strictly by current viewing user
+        const userCards = allCardsMemory.filter(c => c.owner === viewingUser);
+
+        // 2. Compute Analytics Dashboard (Based on Active cards only)
+        const activeOnly = userCards.filter(c => c.status === "Active");
+        let tInvest = 0, tPay = 0, tProf = 0;
+        activeOnly.forEach(c => { tInvest += c.buyPrice; tPay += c.payout; tProf += c.profit; });
+
+        document.getElementById('statInvested').innerText = `$${tInvest.toFixed(2)}`;
+        document.getElementById('statPayout').innerText = `$${tPay.toFixed(2)}`;
+        const prEl = document.getElementById('statProfit');
+        prEl.innerText = `${tProf >= 0 ? '+' : '-'}$${Math.abs(tProf).toFixed(2)}`;
+        prEl.style.color = tProf >= 0 ? 'var(--success)' : 'var(--danger)';
+        document.getElementById('statCount').innerText = activeOnly.length;
+
+        // 3. Render filtered list (Active vs Sold)
+        const displayCards = userCards.filter(c => c.status === currentTab);
+
+        if (displayCards.length === 0) {
+            listEl.innerHTML = `<p style="text-align:center; color:var(--label); margin-top:30px;">No ${currentTab.toLowerCase()} cards found.</p>`;
             return;
         }
 
-        snapshot.forEach((docSnapshot) => {
-            const data = docSnapshot.data();
-            const id = docSnapshot.id;
+        displayCards.forEach(c => {
+            const isPos = c.profit >= 0;
+            const pCol = isPos ? 'var(--success)' : 'var(--danger)';
+            const soldClass = c.status === 'Sold' ? 'vault-item sold-item' : 'vault-item';
             
-            const isSold = data.status === "Sold";
-            const btnClass = isSold ? "status-toggle sold" : "status-toggle";
-            const btnText = isSold ? "✓ Sold" : "In Hand";
-            
-            const isPositive = data.profit >= 0;
-            const profitColor = isPositive ? "var(--success)" : "var(--danger)";
-
             listEl.innerHTML += `
-                <div class="vault-item" style="opacity: ${isSold ? '0.6' : '1'}">
+                <div class="${soldClass}" onclick="openActionModal('${c.id}')">
                     <div class="item-head">
-                        <span class="item-name">${data.name}</span>
-                        <span class="item-buyer">${data.buyer} • ${data.dateAdded}</span>
+                        <span class="item-name">${c.name}</span>
+                        <span class="item-date">${c.date}</span>
                     </div>
-                    <div class="item-row"><span>Buy Price:</span> <span>$${data.buyPrice.toFixed(2)}</span></div>
-                    <div class="item-row"><span>Collectr Value:</span> <span>$${data.collectrPrice.toFixed(2)}</span></div>
-                    <div class="item-row"><span>85% Payout:</span> <span>$${data.payout.toFixed(2)}</span></div>
-                    
-                    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                        <button class="${btnClass}" onclick="toggleStatus('${id}', '${data.status}')">${btnText}</button>
-                        <div class="item-profit" style="color: ${profitColor}">${isPositive ? '+' : '-'}$${Math.abs(data.profit).toFixed(2)}</div>
-                    </div>
+                    <div class="item-row"><span>Buy Price:</span> <span>$${c.buyPrice.toFixed(2)}</span></div>
+                    <div class="item-row"><span>Collectr Value:</span> <span>$${c.collectrPrice.toFixed(2)}</span></div>
+                    <div class="item-row"><span>Obsidian Payout:</span> <span>$${c.payout.toFixed(2)}</span></div>
+                    <div class="item-profit" style="color:${pCol}">${isPos ? '+' : '-'}$${Math.abs(c.profit).toFixed(2)}</div>
                 </div>
             `;
         });
-    });
+    }
 
-    // --- UPDATE STATUS IN FIREBASE ---
-    window.toggleStatus = async function(id, currentStatus) {
-        const newStatus = currentStatus === "In Hand" ? "Sold" : "In Hand";
-        const cardRef = doc(db, "obsidian_cards", id);
-        await updateDoc(cardRef, { status: newStatus });
+    // --- CRUD: UPDATE / DELETE / SELL ---
+    window.openActionModal = (id) => {
+        const c = allCardsMemory.find(x => x.id === id);
+        if (!c) return;
+
+        // Security check: Don't allow editing someone else's card during snooping
+        if (c.owner !== myUser) return showAlert("Viewing mode only. Cannot edit.");
+
+        document.getElementById('actionId').value = c.id;
+        document.getElementById('editName').value = c.name;
+        document.getElementById('editBuy').value = c.buyPrice;
+        document.getElementById('editCollectr').value = c.collectrPrice;
+        
+        const sellBtn = document.getElementById('sellActionBtn');
+        if (c.status === "Active") {
+            sellBtn.style.display = 'block';
+            document.getElementById('actionTitle').innerText = "Manage Active Card";
+        } else {
+            sellBtn.style.display = 'none';
+            document.getElementById('actionTitle').innerText = "Manage Sold Card";
+        }
+
+        document.getElementById('actionModal').style.display = 'flex';
+    };
+
+    window.markItemSold = async () => {
+        const id = document.getElementById('actionId').value;
+        await updateDoc(doc(db, "obsidian_cards", id), { status: "Sold" });
+        closeAllModals(); showAlert("Moved to Sold History");
+    };
+
+    window.updateCardDetails = async () => {
+        const id = document.getElementById('actionId').value;
+        const nm = document.getElementById('editName').value.trim();
+        const b = parseFloat(document.getElementById('editBuy').value);
+        const c = parseFloat(document.getElementById('editCollectr').value);
+
+        if (!nm || isNaN(b) || isNaN(c)) return showAlert("Invalid values");
+
+        await updateDoc(doc(db, "obsidian_cards", id), {
+            name: nm, buyPrice: b, collectrPrice: c,
+            payout: c * 0.85, profit: (c * 0.85) - b
+        });
+
+        closeAllModals(); showAlert("Updated");
+    };
+
+    window.deleteCardRecord = async () => {
+        if (!confirm("Permanently delete this record?")) return;
+        const id = document.getElementById('actionId').value;
+        await deleteDoc(doc(db, "obsidian_cards", id));
+        closeAllModals(); showAlert("Deleted");
+    };
+
+    // --- MULTI-USER SNOOP ENGINE ---
+    window.openUsersModal = () => {
+        const box = document.getElementById('userRowsContainer');
+        box.innerHTML = '';
+        
+        // Extract unique users from users collection + active memory
+        const owners = [...new Set(allCardsMemory.map(c => c.owner))];
+        if (!owners.includes(myUser)) owners.push(myUser);
+
+        owners.forEach(u => {
+            const isMe = u === myUser;
+            box.innerHTML += `
+                <div class="user-row">
+                    <span style="font-weight:bold;">${u.toUpperCase()} ${isMe ? '(You)' : ''}</span>
+                    <button onclick="snoopUser('${u}')">${isMe ? 'View Vault' : 'View Flips'}</button>
+                </div>
+            `;
+        });
+        document.getElementById('usersModal').style.display = 'flex';
+    };
+
+    window.snoopUser = (target) => {
+        viewingUser = target;
+        closeAllModals();
+        
+        const banner = document.getElementById('snoopBanner');
+        if (target !== myUser) {
+            document.getElementById('snoopName').innerText = target.toUpperCase();
+            banner.style.display = 'flex';
+        } else {
+            banner.style.display = 'none';
+        }
+        processAndRender();
+    };
+
+    window.resetViewToSelf = () => {
+        viewingUser = myUser;
+        document.getElementById('snoopBanner').style.display = 'none';
+        processAndRender();
     };
 
 </script>
