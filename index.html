@@ -9,6 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f172a">
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
 
@@ -106,7 +107,6 @@
 
 <div id="customAlert"></div>
 
-<!-- Login Modal -->
 <div class="modal-overlay" id="loginModal">
     <div class="card" style="width: 100%; max-width: 360px; margin: auto; text-align: center;">
         <h2 style="margin-top: 0; color: var(--obsidian-primary);">Obsidian Calculator</h2>
@@ -116,7 +116,6 @@
     </div>
 </div>
 
-<!-- Main App -->
 <div class="app-container" id="mainApp" style="display: none;">
     
     <div class="header-top">
@@ -127,13 +126,11 @@
         </div>
     </div>
 
-    <!-- Snooping Banner -->
     <div id="snoopBanner" class="viewing-banner" style="display: none;">
         <span>Viewing: <span id="snoopName"></span></span>
         <button onclick="resetViewToSelf()">Exit View</button>
     </div>
 
-    <!-- Live Calculator (Now with an ID so we can hide it) -->
     <div class="card" id="liveCalcCard">
         <label>Buy Price</label>
         <input type="number" id="calcBuy" placeholder="$0.00" step="0.01" oninput="runLiveCalc()">
@@ -150,7 +147,6 @@
         </div>
     </div>
 
-    <!-- Dashboard Analytics -->
     <div class="stats-grid">
         <div class="stat-box"><div class="stat-label">Invested</div><div class="stat-val" id="statInvested">$0.00</div></div>
         <div class="stat-box"><div class="stat-label">Payout</div><div class="stat-val" id="statPayout">$0.00</div></div>
@@ -158,7 +154,6 @@
         <div class="stat-box"><div class="stat-label">Cards Tracked</div><div class="stat-val" id="statCount">0</div></div>
     </div>
 
-    <!-- Inventory Section -->
     <div class="list-header">
         <div class="list-tabs">
             <button class="tab active" id="tabActive" onclick="setListTab('Active')">Active List</button>
@@ -169,7 +164,6 @@
     <div id="inventoryList"><p style="text-align: center; color: var(--label);">Loading cards...</p></div>
 </div>
 
-<!-- Modal: Add New Card -->
 <div class="modal-overlay" id="addModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
         <h3 style="margin-top: 0; color: white;">Log Card Purchase</h3>
@@ -187,7 +181,6 @@
     </div>
 </div>
 
-<!-- Modal: Edit My Item -->
 <div class="modal-overlay" id="actionModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
         <h3 id="actionTitle" style="margin-top: 0; color: white;">Manage Item</h3>
@@ -204,7 +197,6 @@
     </div>
 </div>
 
-<!-- Modal: View Only Receipt (Snooping Friend's Card) -->
 <div class="modal-overlay" id="viewReceiptModal">
     <div class="card" style="width: 100%; max-width: 360px; margin: auto; border-top: 4px solid #3b82f6;">
         <div style="display:flex; justify-content:space-between; color:var(--label); font-size:0.75rem; font-weight:bold;">
@@ -226,7 +218,6 @@
     </div>
 </div>
 
-<!-- Modal: Users Roster -->
 <div class="modal-overlay" id="usersModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto; max-height: 80vh; display: flex; flex-direction: column;">
         <h3 style="margin-top: 0; color: white;">Registered Users</h3>
@@ -236,7 +227,6 @@
     </div>
 </div>
 
-<!-- Firebase SDKs -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, setDoc, getDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
@@ -494,10 +484,10 @@
         if (targetKey !== myUser) {
             document.getElementById('snoopName').innerText = targetDisplay.toUpperCase();
             banner.style.display = 'flex';
-            calcCard.style.display = 'none'; // Hides the calculator
+            calcCard.style.display = 'none'; 
         } else {
             banner.style.display = 'none';
-            calcCard.style.display = 'block'; // Ensures it shows on your page
+            calcCard.style.display = 'block'; 
         }
         processAndRender();
     };
@@ -505,10 +495,16 @@
     window.resetViewToSelf = () => {
         viewingUser = myUser;
         document.getElementById('snoopBanner').style.display = 'none';
-        document.getElementById('liveCalcCard').style.display = 'block'; // Brings the calculator back
+        document.getElementById('liveCalcCard').style.display = 'block'; 
         processAndRender();
     };
 
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
 </script>
 </body>
 </html>
