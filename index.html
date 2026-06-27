@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obsidian Shared Vault</title>
+    <title>Obsidian Calculator</title>
     <style>
         :root {
             --obsidian-primary: #8b5cf6;
@@ -26,8 +26,28 @@
         }
         .app-container { width: 100%; max-width: 450px; padding-bottom: 50px; }
         
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { color: var(--obsidian-primary); margin: 0; font-size: 2rem; }
+        /* Header & Plus Button */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header-top h1 { color: var(--obsidian-primary); margin: 0; font-size: 1.6rem; }
+        .add-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--obsidian-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         
         .card {
             background: var(--card);
@@ -70,7 +90,7 @@
         .profit-val.negative { color: var(--danger); }
         .profit-val.neutral { color: white; }
         
-        button {
+        button.action-btn {
             width: 100%;
             padding: 15px;
             background: var(--obsidian-primary);
@@ -81,23 +101,38 @@
             font-weight: bold;
             margin-top: 25px;
             cursor: pointer;
-            transition: opacity 0.2s;
         }
-        button:active { opacity: 0.8; }
         button.cancel-btn { background: #334155; margin-top: 10px; }
         
-        /* Modal Overlays (For Login & Adding Cards) */
+        /* Modal Overlays */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             padding: 20px;
             box-sizing: border-box;
+        }
+
+        /* Custom Alert Notification */
+        #customAlert {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--obsidian-primary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 2000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            text-align: center;
+            min-width: 200px;
         }
 
         /* The Vault List */
@@ -127,20 +162,22 @@
 </head>
 <body>
 
+<div id="customAlert"></div>
+
 <div class="modal-overlay" id="loginModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto; text-align: center;">
-        <h2 style="margin-top: 0; color: var(--obsidian-primary);">Welcome to The Vault</h2>
-        <p style="color: var(--label); font-size: 0.9rem; margin-bottom: 20px;">Enter your hustle alias below.</p>
+        <h2 style="margin-top: 0; color: var(--obsidian-primary);">Obsidian Calculator</h2>
+        <p style="color: var(--label); font-size: 0.9rem; margin-bottom: 20px;">Username Below</p>
         
-        <input type="text" id="usernameInput" placeholder="e.g. John" style="text-align: center;">
-        <button id="loginBtn" onclick="handleLogin()">Enter Vault</button>
+        <input type="text" id="usernameInput" placeholder="Username" style="text-align: center;">
+        <button class="action-btn" id="loginBtn" onclick="handleLogin()">Login</button>
     </div>
 </div>
 
 <div class="app-container" id="mainApp" style="display: none;">
-    <div class="header">
-        <h1>Obsidian Calc</h1>
-        <p style="color: var(--label); margin-top: 5px;">Shared Vault</p>
+    <div class="header-top">
+        <h1>Obsidian Calculator</h1>
+        <button class="add-btn" onclick="openModal()">+</button>
     </div>
 
     <div class="card">
@@ -159,24 +196,32 @@
             <div class="profit-label">Net Profit</div>
             <div class="profit-val neutral" id="previewProfit">$0.00</div>
         </div>
-
-        <button onclick="openModal()">+ Add to Vault</button>
     </div>
 
-    <div class="vault-title">The Vault Collection</div>
+    <div class="vault-title">Collection</div>
     <div id="vaultList">
-        <p style="text-align: center; color: #334155;">Loading shared vault...</p>
+        <p style="text-align: center; color: #334155;">Loading data...</p>
     </div>
 </div>
 
 <div class="modal-overlay" id="addModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
-        <h2 style="margin-top: 0; color: white;">Log Card Flip</h2>
-        <label>Card Name</label>
-        <input type="text" id="cardName" placeholder="e.g. Base Set Charizard">
+        <h2 style="margin-top: 0; color: white;">Add to List</h2>
         
-        <button onclick="logToVault()">Confirm & Add</button>
-        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        <label>Purchase Date</label>
+        <input type="date" id="modalDate">
+
+        <label>Item Name</label>
+        <input type="text" id="modalName" placeholder="e.g. Charizard">
+        
+        <label>Buy Price</label>
+        <input type="number" id="modalBuy" placeholder="$0.00" step="0.01">
+
+        <label>Collectr Value</label>
+        <input type="number" id="modalCollectr" placeholder="$0.00" step="0.01">
+        
+        <button class="action-btn" onclick="logToVault()">Add to List</button>
+        <button class="action-btn cancel-btn" onclick="closeModal()">Cancel</button>
     </div>
 </div>
 
@@ -184,7 +229,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, setDoc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-    // Your specific Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyAFBXf5X9_F8EzO7jj4zW8WIbOC3LIJHO8",
         authDomain: "obsidian-calculator-3468f.firebaseapp.com",
@@ -194,15 +238,25 @@
         appId: "1:184324140376:web:9dd100bb9acdef0add892d"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const vaultCollection = collection(db, "obsidian_cards");
 
+    // --- CUSTOM ALERT LOGIC ---
+    let alertTimeout;
+    window.showAlert = function(message) {
+        const alertBox = document.getElementById('customAlert');
+        alertBox.innerText = message;
+        alertBox.style.display = 'block';
+        clearTimeout(alertTimeout);
+        alertTimeout = setTimeout(() => {
+            alertBox.style.display = 'none';
+        }, 3000);
+    };
+
     // --- USER LOGIN LOGIC ---
     let currentUser = localStorage.getItem('obsidian_username');
 
-    // Check if user is already saved on this phone
     if (currentUser) {
         document.getElementById('mainApp').style.display = 'block';
     } else {
@@ -211,11 +265,10 @@
 
     window.handleLogin = async function() {
         const inputName = document.getElementById('usernameInput').value.trim();
-        if (!inputName) return alert("Please enter a name!");
+        if (!inputName) return showAlert("Please enter a username");
 
         const btn = document.getElementById('loginBtn');
-        btn.innerText = "Checking...";
-        btn.style.opacity = "0.5";
+        btn.innerText = "Loading...";
 
         const userKey = inputName.toLowerCase();
         const userRef = doc(db, "obsidian_users", userKey);
@@ -224,17 +277,15 @@
             const userDoc = await getDoc(userRef);
             
             if (userDoc.exists()) {
-                alert(`Welcome back, ${inputName}!`);
+                showAlert(`Welcome back, ${inputName}`);
             } else {
-                // Register them in the database
                 await setDoc(userRef, {
                     username: inputName,
                     registeredAt: Date.now()
                 });
-                alert(`New user registered: ${inputName}`);
+                showAlert(`Registered user: ${inputName}`);
             }
 
-            // Save to phone memory and load app
             localStorage.setItem('obsidian_username', inputName);
             currentUser = inputName;
             
@@ -242,10 +293,8 @@
             document.getElementById('mainApp').style.display = 'block';
 
         } catch (error) {
-            console.error("Login Error:", error);
-            alert("Connection error. Make sure your database rules are set to true!");
-            btn.innerText = "Enter Vault";
-            btn.style.opacity = "1";
+            showAlert("Connection error");
+            btn.innerText = "Login";
         }
     };
 
@@ -277,34 +326,34 @@
 
     // --- MODAL LOGIC FOR ADDING CARDS ---
     window.openModal = function() {
-        const buy = document.getElementById('buyPrice').value;
-        const collectr = document.getElementById('collectrPrice').value;
-        
-        if (!buy || !collectr) {
-            alert("Enter a Buy Price and Collectr Value first!");
-            return;
-        }
         document.getElementById('addModal').style.display = 'flex';
-        document.getElementById('cardName').focus();
+        // Set date input to today by default
+        document.getElementById('modalDate').valueAsDate = new Date();
     };
 
     window.closeModal = function() {
         document.getElementById('addModal').style.display = 'none';
-        document.getElementById('cardName').value = '';
+        document.getElementById('modalName').value = '';
+        document.getElementById('modalBuy').value = '';
+        document.getElementById('modalCollectr').value = '';
     };
 
     // --- ADD CARD TO FIREBASE ---
     window.logToVault = async function() {
-        const name = document.getElementById('cardName').value;
-        const buy = parseFloat(document.getElementById('buyPrice').value);
-        const collectr = parseFloat(document.getElementById('collectrPrice').value);
+        const date = document.getElementById('modalDate').value;
+        const name = document.getElementById('modalName').value.trim();
+        const buyInput = document.getElementById('modalBuy').value;
+        const collectrInput = document.getElementById('modalCollectr').value;
 
-        if (!name) return alert("Please enter a card name!");
+        if (!date || !name || !buyInput || !collectrInput) {
+            return showAlert("Please fill out all fields");
+        }
 
+        const buy = parseFloat(buyInput);
+        const collectr = parseFloat(collectrInput);
         const payout = collectr * 0.85;
         const profit = payout - buy;
 
-        // Save to cloud using the registered username
         await addDoc(vaultCollection, {
             name: name,
             buyPrice: buy,
@@ -313,15 +362,12 @@
             profit: profit,
             buyer: currentUser,
             status: "In Hand",
-            dateAdded: new Date().toLocaleDateString(),
+            dateAdded: date,
             timestamp: Date.now()
         });
 
-        // Close modal and clear all forms ready for next card
         closeModal();
-        document.getElementById('buyPrice').value = '';
-        document.getElementById('collectrPrice').value = '';
-        window.calculate(); // Reset profit display
+        showAlert("Added to list");
     };
 
     // --- REAL-TIME SYNC (READ CARDS FROM FIREBASE) ---
@@ -329,10 +375,10 @@
     
     onSnapshot(q, (snapshot) => {
         const listEl = document.getElementById('vaultList');
-        listEl.innerHTML = ''; // Clear current list
+        listEl.innerHTML = ''; 
 
         if (snapshot.empty) {
-            listEl.innerHTML = '<p style="text-align:center; color:#64748b;">Vault is empty. Add a card!</p>';
+            listEl.innerHTML = '<p style="text-align:center; color:#64748b;">List is empty.</p>';
             return;
         }
 
