@@ -2,8 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Obsidian Calculator</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+
     <style>
         :root {
             --obsidian-primary: #8b5cf6;
@@ -25,6 +33,7 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
+            overscroll-behavior-y: none; /* Prevents annoying pull-to-refresh on mobile */
         }
         .app-container { width: 100%; max-width: 450px; padding-bottom: 60px; position: relative; }
         
@@ -148,15 +157,15 @@
 
     <div class="stats-grid">
         <div class="stat-box">
-            <div class="stat-label">Invested Capital</div>
+            <div class="stat-label">Invested</div>
             <div class="stat-val" id="statInvested">$0.00</div>
         </div>
         <div class="stat-box">
-            <div class="stat-label">Expected Payout</div>
+            <div class="stat-label">Payout</div>
             <div class="stat-val" id="statPayout">$0.00</div>
         </div>
         <div class="stat-box">
-            <div class="stat-label">Projected Profit</div>
+            <div class="stat-label">Profit</div>
             <div class="stat-val" id="statProfit" style="color: var(--success);">$0.00</div>
         </div>
         <div class="stat-box">
@@ -240,8 +249,8 @@
 
     // --- STATE ---
     let myUser = localStorage.getItem('obsidian_username');
-    let viewingUser = myUser; // Defaults to viewing yourself
-    let currentTab = 'Active'; // 'Active' or 'Sold'
+    let viewingUser = myUser; 
+    let currentTab = 'Active'; 
     let allCardsMemory = [];
     let alertTimer;
 
@@ -331,11 +340,14 @@
         const listEl = document.getElementById('inventoryList');
         listEl.innerHTML = '';
 
-        // 1. Filter strictly by current viewing user
-        const userCards = allCardsMemory.filter(c => c.owner === viewingUser);
+        // FIX: Filters by current viewing user, checking BOTH new (owner) and old (buyer) tags!
+        const userCards = allCardsMemory.filter(c => {
+            const cardOwner = c.owner || (c.buyer ? c.buyer.toLowerCase() : '');
+            return cardOwner === viewingUser;
+        });
 
-        // 2. Compute Analytics Dashboard (Based on Active cards only)
-        const activeOnly = userCards.filter(c => c.status === "Active");
+        // Compute Dashboard Grid
+        const activeOnly = userCards.filter(c => c.status === "Active" || !c.status || c.status === "In Hand");
         let tInvest = 0, tPay = 0, tProf = 0;
         activeOnly.forEach(c => { tInvest += c.buyPrice; tPay += c.payout; tProf += c.profit; });
 
@@ -346,8 +358,11 @@
         prEl.style.color = tProf >= 0 ? 'var(--success)' : 'var(--danger)';
         document.getElementById('statCount').innerText = activeOnly.length;
 
-        // 3. Render filtered list (Active vs Sold)
-        const displayCards = userCards.filter(c => c.status === currentTab);
+        // Render filtered list (Active vs Sold)
+        const displayCards = userCards.filter(c => {
+            if (currentTab === 'Active') return c.status === "Active" || !c.status || c.status === "In Hand";
+            return c.status === "Sold";
+        });
 
         if (displayCards.length === 0) {
             listEl.innerHTML = `<p style="text-align:center; color:var(--label); margin-top:30px;">No ${currentTab.toLowerCase()} cards found.</p>`;
@@ -358,12 +373,13 @@
             const isPos = c.profit >= 0;
             const pCol = isPos ? 'var(--success)' : 'var(--danger)';
             const soldClass = c.status === 'Sold' ? 'vault-item sold-item' : 'vault-item';
-            
+            const dateStr = c.date || c.dateAdded || '';
+
             listEl.innerHTML += `
                 <div class="${soldClass}" onclick="openActionModal('${c.id}')">
                     <div class="item-head">
                         <span class="item-name">${c.name}</span>
-                        <span class="item-date">${c.date}</span>
+                        <span class="item-date">${dateStr}</span>
                     </div>
                     <div class="item-row"><span>Buy Price:</span> <span>$${c.buyPrice.toFixed(2)}</span></div>
                     <div class="item-row"><span>Collectr Value:</span> <span>$${c.collectrPrice.toFixed(2)}</span></div>
@@ -379,8 +395,8 @@
         const c = allCardsMemory.find(x => x.id === id);
         if (!c) return;
 
-        // Security check: Don't allow editing someone else's card during snooping
-        if (c.owner !== myUser) return showAlert("Viewing mode only. Cannot edit.");
+        const cardOwner = c.owner || (c.buyer ? c.buyer.toLowerCase() : '');
+        if (cardOwner !== myUser) return showAlert("Viewing mode only. Cannot edit.");
 
         document.getElementById('actionId').value = c.id;
         document.getElementById('editName').value = c.name;
@@ -388,7 +404,8 @@
         document.getElementById('editCollectr').value = c.collectrPrice;
         
         const sellBtn = document.getElementById('sellActionBtn');
-        if (c.status === "Active") {
+        const isActive = c.status === "Active" || !c.status || c.status === "In Hand";
+        if (isActive) {
             sellBtn.style.display = 'block';
             document.getElementById('actionTitle').innerText = "Manage Active Card";
         } else {
@@ -433,8 +450,7 @@
         const box = document.getElementById('userRowsContainer');
         box.innerHTML = '';
         
-        // Extract unique users from users collection + active memory
-        const owners = [...new Set(allCardsMemory.map(c => c.owner))];
+        const owners = [...new Set(allCardsMemory.map(c => c.owner || (c.buyer ? c.buyer.toLowerCase() : '')).filter(Boolean))];
         if (!owners.includes(myUser)) owners.push(myUser);
 
         owners.forEach(u => {
