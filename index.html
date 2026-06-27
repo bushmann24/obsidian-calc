@@ -33,11 +33,10 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
-            overscroll-behavior-y: none; /* Prevents annoying pull-to-refresh on mobile */
+            overscroll-behavior-y: none;
         }
         .app-container { width: 100%; max-width: 450px; padding-bottom: 60px; position: relative; }
         
-        /* Header & Icons */
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .header-top h1 { color: var(--obsidian-primary); margin: 0; font-size: 1.6rem; }
         .header-actions { display: flex; gap: 8px; }
@@ -47,14 +46,12 @@
         }
         .icon-btn.primary { background: var(--obsidian-primary); border-color: var(--obsidian-primary); }
 
-        /* Viewing Banner */
         .viewing-banner {
             background: #3b82f6; color: white; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold;
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
         }
-        .viewing-banner button { background: rgba(0,0,0,0.2); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+        .viewing-banner button { background: rgba(0,0,0,0.2); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight:bold;}
 
-        /* Cards & Inputs */
         .card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
         label { display: block; font-size: 0.8rem; color: var(--label); margin: 12px 0 6px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
         label:first-child { margin-top: 0; }
@@ -62,13 +59,11 @@
         input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: white; font-size: 1.05rem; box-sizing: border-box; font-weight: 600; }
         input:focus { outline: none; border-color: var(--obsidian-primary); }
         
-        /* Dashboard Stats Grid */
         .stats-grid { display: grid; grid-cols-2; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-label { font-size: 0.7rem; color: var(--label); text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
         .stat-val { font-size: 1.2rem; font-weight: 800; color: white; }
 
-        /* Live Calc Previews */
         .live-math { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 12px; border-top: 1px dashed var(--border); }
         .math-stat { color: var(--label); font-size: 0.9rem; font-weight: 600; }
         .math-val { font-size: 1.15rem; font-weight: bold; color: white; }
@@ -80,13 +75,10 @@
         .profit-val.negative { color: var(--danger); }
         .profit-val.neutral { color: white; }
 
-        /* Buttons */
         button.action-btn { width: 100%; padding: 14px; background: var(--obsidian-primary); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; margin-top: 20px; cursor: pointer; }
         button.cancel-btn { background: var(--border); margin-top: 8px; }
         button.danger-btn { background: var(--danger); margin-top: 8px; }
-        button.success-btn { background: var(--success); color: #0f172a; margin-top: 8px; }
 
-        /* List Tabs & Items */
         .list-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px; }
         .list-tabs { display: flex; gap: 10px; }
         .tab { background: none; border: none; color: var(--label); font-size: 0.95rem; font-weight: bold; cursor: pointer; padding: 0 4px 4px 4px; }
@@ -103,7 +95,6 @@
         .item-row span:last-child { color: white; font-weight: 600; }
         .item-profit { font-size: 1.1rem; font-weight: bold; text-align: right; margin-top: 8px; }
 
-        /* Overlays */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         #customAlert { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--obsidian-primary); color: white; padding: 12px 20px; border-radius: 8px; font-weight: bold; z-index: 2000; box-shadow: 0 4px 6px rgba(0,0,0,0.3); text-align: center; }
         
@@ -156,22 +147,10 @@
     </div>
 
     <div class="stats-grid">
-        <div class="stat-box">
-            <div class="stat-label">Invested</div>
-            <div class="stat-val" id="statInvested">$0.00</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-label">Payout</div>
-            <div class="stat-val" id="statPayout">$0.00</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-label">Profit</div>
-            <div class="stat-val" id="statProfit" style="color: var(--success);">$0.00</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-label">Cards Tracked</div>
-            <div class="stat-val" id="statCount">0</div>
-        </div>
+        <div class="stat-box"><div class="stat-label">Invested</div><div class="stat-val" id="statInvested">$0.00</div></div>
+        <div class="stat-box"><div class="stat-label">Payout</div><div class="stat-val" id="statPayout">$0.00</div></div>
+        <div class="stat-box"><div class="stat-label">Profit</div><div class="stat-val" id="statProfit" style="color: var(--success);">$0.00</div></div>
+        <div class="stat-box"><div class="stat-label">Cards Tracked</div><div class="stat-val" id="statCount">0</div></div>
     </div>
 
     <div class="list-header">
@@ -179,7 +158,7 @@
             <button class="tab active" id="tabActive" onclick="setListTab('Active')">Active List</button>
             <button class="tab" id="tabSold" onclick="setListTab('Sold')">Sold History</button>
         </div>
-        <span style="font-size: 0.75rem; color: var(--label); font-style: italic;">Tap item to edit</span>
+        <span style="font-size: 0.75rem; color: var(--label); font-style: italic;">Tap item to view/edit</span>
     </div>
     <div id="inventoryList"><p style="text-align: center; color: var(--label);">Loading cards...</p></div>
 </div>
@@ -196,7 +175,7 @@
         <label>Collectr Value</label>
         <input type="number" id="addCollectr" placeholder="$0.00" step="0.01">
         
-        <button class="action-btn" onclick="saveNewCard()">Save to Inventory</button>
+        <button class="action-btn" onclick="saveNewCard()">Add to List</button>
         <button class="action-btn cancel-btn" onclick="closeAllModals()">Cancel</button>
     </div>
 </div>
@@ -206,12 +185,9 @@
         <h3 id="actionTitle" style="margin-top: 0; color: white;">Manage Item</h3>
         <input type="hidden" id="actionId">
         
-        <label>Item Name</label>
-        <input type="text" id="editName">
-        <label>Buy Price</label>
-        <input type="number" id="editBuy" step="0.01">
-        <label>Collectr Value</label>
-        <input type="number" id="editCollectr" step="0.01">
+        <label>Item Name</label><input type="text" id="editName">
+        <label>Buy Price</label><input type="number" id="editBuy" step="0.01">
+        <label>Collectr Value</label><input type="number" id="editCollectr" step="0.01">
 
         <button class="action-btn" id="sellActionBtn" onclick="markItemSold()" style="display:none; background:#10b981; color:#0f172a;">Confirm Sale</button>
         <button class="action-btn" onclick="updateCardDetails()">Update Prices</button>
@@ -220,10 +196,31 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="viewReceiptModal">
+    <div class="card" style="width: 100%; max-width: 360px; margin: auto; border-top: 4px solid #3b82f6;">
+        <div style="display:flex; justify-content:space-between; color:var(--label); font-size:0.75rem; font-weight:bold;">
+            <span>FLIP RECEIPT</span>
+            <span id="receiptOwner" style="color:#3b82f6;"></span>
+        </div>
+        <h2 id="receiptName" style="margin: 6px 0 16px 0; color:white; font-size:1.3rem;"></h2>
+        
+        <div class="item-row"><span>Buy Price:</span> <span id="receiptBuy"></span></div>
+        <div class="item-row"><span>Collectr Value:</span> <span id="receiptCollectr"></span></div>
+        <div class="item-row"><span>Obsidian Payout:</span> <span id="receiptPayout"></span></div>
+        
+        <div style="margin-top:14px; padding-top:12px; border-top:1px dashed var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:var(--label); font-weight:bold;">Net Profit</span>
+            <span id="receiptProfit" style="font-size:1.4rem; font-weight:900;"></span>
+        </div>
+
+        <button class="action-btn cancel-btn" onclick="closeAllModals()" style="margin-top:22px;">Close</button>
+    </div>
+</div>
+
 <div class="modal-overlay" id="usersModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto; max-height: 80vh; display: flex; flex-direction: column;">
         <h3 style="margin-top: 0; color: white;">Registered Users</h3>
-        <p style="font-size: 0.8rem; color: var(--label); margin-top: -10px;">Select a user to view their personal vault.</p>
+        <p style="font-size: 0.8rem; color: var(--label); margin-top: -10px;">Select a user to view their vault.</p>
         <div id="userRowsContainer" style="overflow-y: auto; flex: 1; margin: 10px 0;"></div>
         <button class="action-btn cancel-btn" onclick="closeAllModals()">Close</button>
     </div>
@@ -231,7 +228,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, setDoc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, setDoc, getDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAFBXf5X9_F8EzO7jj4zW8WIbOC3LIJHO8",
@@ -247,7 +244,6 @@
     const cardsRef = collection(db, "obsidian_cards");
     const usersRef = collection(db, "obsidian_users");
 
-    // --- STATE ---
     let myUser = localStorage.getItem('obsidian_username');
     let viewingUser = myUser; 
     let currentTab = 'Active'; 
@@ -261,7 +257,6 @@
         alertTimer = setTimeout(() => el.style.display = 'none', 2500);
     };
 
-    // --- INIT AUTH ---
     if (myUser) { viewingUser = myUser; document.getElementById('mainApp').style.display = 'block'; }
     else document.getElementById('loginModal').style.display = 'flex';
 
@@ -281,7 +276,6 @@
         } catch(e) { showAlert("Connection error"); }
     };
 
-    // --- LIVE CALC ---
     window.runLiveCalc = () => {
         const b = parseFloat(document.getElementById('calcBuy').value) || 0;
         const c = parseFloat(document.getElementById('calcCollectr').value) || 0;
@@ -293,7 +287,6 @@
         prEl.innerText = `${pr >= 0 ? '+' : '-'}$${Math.abs(pr).toFixed(2)}`;
     };
 
-    // --- MODAL CONTROLS ---
     window.closeAllModals = () => {
         document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
     };
@@ -303,7 +296,6 @@
         document.getElementById('addDate').valueAsDate = new Date();
     };
 
-    // --- CRUD: ADD ---
     window.saveNewCard = async () => {
         const dt = document.getElementById('addDate').value;
         const nm = document.getElementById('addName').value.trim();
@@ -319,11 +311,10 @@
             date: dt, ts: Date.now()
         });
 
-        closeAllModals(); showAlert("Card saved");
+        closeAllModals(); showAlert("Added to list");
         document.getElementById('addName').value = ''; document.getElementById('addBuy').value = ''; document.getElementById('addCollectr').value = '';
     };
 
-    // --- SYNC & RENDER ENGINE ---
     onSnapshot(query(cardsRef, orderBy("ts", "desc")), (snap) => {
         allCardsMemory = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         processAndRender();
@@ -340,13 +331,11 @@
         const listEl = document.getElementById('inventoryList');
         listEl.innerHTML = '';
 
-        // FIX: Filters by current viewing user, checking BOTH new (owner) and old (buyer) tags!
         const userCards = allCardsMemory.filter(c => {
-            const cardOwner = c.owner || (c.buyer ? c.buyer.toLowerCase() : '');
-            return cardOwner === viewingUser;
+            const o = (c.owner || c.buyer || '').toLowerCase();
+            return o === viewingUser;
         });
 
-        // Compute Dashboard Grid
         const activeOnly = userCards.filter(c => c.status === "Active" || !c.status || c.status === "In Hand");
         let tInvest = 0, tPay = 0, tProf = 0;
         activeOnly.forEach(c => { tInvest += c.buyPrice; tPay += c.payout; tProf += c.profit; });
@@ -358,14 +347,13 @@
         prEl.style.color = tProf >= 0 ? 'var(--success)' : 'var(--danger)';
         document.getElementById('statCount').innerText = activeOnly.length;
 
-        // Render filtered list (Active vs Sold)
         const displayCards = userCards.filter(c => {
             if (currentTab === 'Active') return c.status === "Active" || !c.status || c.status === "In Hand";
             return c.status === "Sold";
         });
 
         if (displayCards.length === 0) {
-            listEl.innerHTML = `<p style="text-align:center; color:var(--label); margin-top:30px;">No ${currentTab.toLowerCase()} cards found.</p>`;
+            listEl.innerHTML = `<p style="text-align:center; color:var(--label); margin-top:30px;">No cards found.</p>`;
             return;
         }
 
@@ -373,13 +361,13 @@
             const isPos = c.profit >= 0;
             const pCol = isPos ? 'var(--success)' : 'var(--danger)';
             const soldClass = c.status === 'Sold' ? 'vault-item sold-item' : 'vault-item';
-            const dateStr = c.date || c.dateAdded || '';
+            const dStr = c.date || c.dateAdded || '';
 
             listEl.innerHTML += `
-                <div class="${soldClass}" onclick="openActionModal('${c.id}')">
+                <div class="${soldClass}" onclick="handleCardClick('${c.id}')">
                     <div class="item-head">
                         <span class="item-name">${c.name}</span>
-                        <span class="item-date">${dateStr}</span>
+                        <span class="item-date">${dStr}</span>
                     </div>
                     <div class="item-row"><span>Buy Price:</span> <span>$${c.buyPrice.toFixed(2)}</span></div>
                     <div class="item-row"><span>Collectr Value:</span> <span>$${c.collectrPrice.toFixed(2)}</span></div>
@@ -390,14 +378,30 @@
         });
     }
 
-    // --- CRUD: UPDATE / DELETE / SELL ---
-    window.openActionModal = (id) => {
+    // --- SMART CLICK: EDIT (MINE) vs VIEW RECEIPT (THEIRS) ---
+    window.handleCardClick = (id) => {
         const c = allCardsMemory.find(x => x.id === id);
         if (!c) return;
 
-        const cardOwner = c.owner || (c.buyer ? c.buyer.toLowerCase() : '');
-        if (cardOwner !== myUser) return showAlert("Viewing mode only. Cannot edit.");
+        const cardOwner = (c.owner || c.buyer || '').toLowerCase();
 
+        // If snooping someone else, trigger Read-Only Receipt
+        if (cardOwner !== myUser) {
+            document.getElementById('receiptName').innerText = c.name;
+            document.getElementById('receiptBuy').innerText = `$${c.buyPrice.toFixed(2)}`;
+            document.getElementById('receiptCollectr').innerText = `$${c.collectrPrice.toFixed(2)}`;
+            document.getElementById('receiptPayout').innerText = `$${c.payout.toFixed(2)}`;
+            
+            const rProf = document.getElementById('receiptProfit');
+            rProf.innerText = `${c.profit >= 0 ? '+' : '-'}$${Math.abs(c.profit).toFixed(2)}`;
+            rProf.style.color = c.profit >= 0 ? 'var(--success)' : 'var(--danger)';
+            
+            document.getElementById('receiptOwner').innerText = cardOwner.toUpperCase();
+            document.getElementById('viewReceiptModal').style.display = 'flex';
+            return;
+        }
+
+        // If it's yours, open the Editor
         document.getElementById('actionId').value = c.id;
         document.getElementById('editName').value = c.name;
         document.getElementById('editBuy').value = c.buyPrice;
@@ -445,33 +449,41 @@
         closeAllModals(); showAlert("Deleted");
     };
 
-    // --- MULTI-USER SNOOP ENGINE ---
-    window.openUsersModal = () => {
+    // --- OFFICIAL DATABASE ROSTER SNOOPING ---
+    window.openUsersModal = async () => {
         const box = document.getElementById('userRowsContainer');
-        box.innerHTML = '';
-        
-        const owners = [...new Set(allCardsMemory.map(c => c.owner || (c.buyer ? c.buyer.toLowerCase() : '')).filter(Boolean))];
-        if (!owners.includes(myUser)) owners.push(myUser);
-
-        owners.forEach(u => {
-            const isMe = u === myUser;
-            box.innerHTML += `
-                <div class="user-row">
-                    <span style="font-weight:bold;">${u.toUpperCase()} ${isMe ? '(You)' : ''}</span>
-                    <button onclick="snoopUser('${u}')">${isMe ? 'View Vault' : 'View Flips'}</button>
-                </div>
-            `;
-        });
+        box.innerHTML = '<p style="color:var(--label); text-align:center;">Fetching users...</p>';
         document.getElementById('usersModal').style.display = 'flex';
+        
+        try {
+            const querySnapshot = await getDocs(usersRef);
+            box.innerHTML = '';
+
+            querySnapshot.forEach((uDoc) => {
+                const uData = uDoc.data();
+                const uKey = uDoc.id; // strictly lowercase
+                const display = uData.display || uKey;
+                const isMe = uKey === myUser;
+
+                box.innerHTML += `
+                    <div class="user-row">
+                        <span style="font-weight:bold;">${display.toUpperCase()} ${isMe ? '(You)' : ''}</span>
+                        <button onclick="snoopUser('${uKey}', '${display}')">${isMe ? 'My Roster' : 'View Flips'}</button>
+                    </div>
+                `;
+            });
+        } catch(e) {
+            box.innerHTML = '<p style="color:var(--danger); text-align:center;">Failed to load roster.</p>';
+        }
     };
 
-    window.snoopUser = (target) => {
-        viewingUser = target;
+    window.snoopUser = (targetKey, targetDisplay) => {
+        viewingUser = targetKey;
         closeAllModals();
         
         const banner = document.getElementById('snoopBanner');
-        if (target !== myUser) {
-            document.getElementById('snoopName').innerText = target.toUpperCase();
+        if (targetKey !== myUser) {
+            document.getElementById('snoopName').innerText = targetDisplay.toUpperCase();
             banner.style.display = 'flex';
         } else {
             banner.style.display = 'none';
