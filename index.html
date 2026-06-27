@@ -39,28 +39,36 @@
         label { display: block; font-size: 0.85rem; color: var(--label); margin: 15px 0 5px 0; font-weight: bold; text-transform: uppercase; }
         label:first-child { margin-top: 0; }
         
-        input, select {
+        input {
             width: 100%;
             padding: 12px;
             border: 1px solid #334155;
             border-radius: 8px;
             background: var(--bg);
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
             box-sizing: border-box;
+            font-weight: 600;
         }
+        input:focus { outline: none; border-color: var(--obsidian-primary); }
         
         .live-math {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 20px;
             padding-top: 15px;
             border-top: 1px dashed #334155;
         }
-        .math-stat { color: var(--label); font-size: 0.9rem; }
+        .math-stat { color: var(--label); font-size: 0.9rem; font-weight: 600; }
         .math-val { font-size: 1.2rem; font-weight: bold; color: white; }
-        .profit-val { font-size: 1.5rem; font-weight: bold; color: var(--success); }
+        
+        .profit-container { text-align: right; margin-top: 15px; }
+        .profit-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--label); font-weight: 700; margin-bottom: 5px; }
+        .profit-val { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; }
+        .profit-val.positive { color: var(--success); }
+        .profit-val.negative { color: var(--danger); }
+        .profit-val.neutral { color: white; }
         
         button {
             width: 100%;
@@ -71,12 +79,29 @@
             border-radius: 8px;
             font-size: 1.1rem;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 25px;
             cursor: pointer;
+            transition: opacity 0.2s;
         }
+        button:active { opacity: 0.8; }
+        button.cancel-btn { background: #334155; margin-top: 10px; }
         
+        /* Modal Overlays (For Login & Adding Cards) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
         /* The Vault List */
-        .vault-title { font-size: 1.2rem; color: var(--label); border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; }
+        .vault-title { font-size: 1.2rem; color: var(--label); border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; font-weight: 600;}
         .vault-item {
             background: #151e2e;
             border-left: 4px solid var(--obsidian-primary);
@@ -86,59 +111,56 @@
         }
         .item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .item-name { font-weight: bold; font-size: 1.1rem; }
-        .item-buyer { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 12px; }
+        .item-buyer { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 12px; color: #cbd5e1; }
         
         .item-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--label); margin-bottom: 4px; }
         .item-row span:last-child { color: white; font-weight: bold; }
-        .item-profit { font-size: 1.2rem; font-weight: bold; text-align: right; color: var(--success); margin-top: 10px; }
+        .item-profit { font-size: 1.2rem; font-weight: bold; text-align: right; margin-top: 10px; }
         
         .status-toggle {
             background: transparent; border: 1px solid var(--label); color: var(--label);
             padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; width: auto; margin-top: 10px;
-            cursor: pointer;
+            cursor: pointer; font-weight: 600;
         }
         .status-toggle.sold { background: var(--success); color: #0f172a; border: none; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="modal-overlay" id="loginModal">
+    <div class="card" style="width: 100%; max-width: 380px; margin: auto; text-align: center;">
+        <h2 style="margin-top: 0; color: var(--obsidian-primary);">Welcome to The Vault</h2>
+        <p style="color: var(--label); font-size: 0.9rem; margin-bottom: 20px;">Enter your hustle alias below.</p>
+        
+        <input type="text" id="usernameInput" placeholder="e.g. John" style="text-align: center;">
+        <button id="loginBtn" onclick="handleLogin()">Enter Vault</button>
+    </div>
+</div>
+
+<div class="app-container" id="mainApp" style="display: none;">
     <div class="header">
-        <h1>Obsidian Vault</h1>
-        <p style="color: var(--label); margin-top: 5px;">Shared Card Tracker</p>
+        <h1>Obsidian Calc</h1>
+        <p style="color: var(--label); margin-top: 5px;">Shared Vault</p>
     </div>
 
     <div class="card">
-        <label>Card Name</label>
-        <input type="text" id="cardName" placeholder="e.g. Base Set Charizard">
+        <label>Buy Price</label>
+        <input type="number" id="buyPrice" placeholder="$0.00" step="0.01" oninput="calculate()">
         
-        <div style="display: flex; gap: 10px;">
-            <div style="flex: 1;">
-                <label>Buy Price</label>
-                <input type="number" id="buyPrice" placeholder="$0.00" oninput="calculate()">
-            </div>
-            <div style="flex: 1;">
-                <label>Collectr Value</label>
-                <input type="number" id="collectrPrice" placeholder="$0.00" oninput="calculate()">
-            </div>
-        </div>
-
-        <label>Who Bought It?</label>
-        <select id="buyerName">
-            <option value="Me">Me</option>
-            <option value="Friend">Friend</option>
-        </select>
+        <label>Collectr Value</label>
+        <input type="number" id="collectrPrice" placeholder="$0.00" step="0.01" oninput="calculate()">
 
         <div class="live-math">
-            <span class="math-stat">Payout (85%)</span>
+            <span class="math-stat">Obsidian Payout (85%)</span>
             <span class="math-val" id="previewPayout">$0.00</span>
         </div>
-        <div class="live-math" style="border: none; padding-top: 5px;">
-            <span class="math-stat">Net Profit</span>
-            <span class="profit-val" id="previewProfit">$0.00</span>
+        
+        <div class="profit-container">
+            <div class="profit-label">Net Profit</div>
+            <div class="profit-val neutral" id="previewProfit">$0.00</div>
         </div>
 
-        <button onclick="logToVault()">+ Add to Vault</button>
+        <button onclick="openModal()">+ Add to Vault</button>
     </div>
 
     <div class="vault-title">The Vault Collection</div>
@@ -147,9 +169,20 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="addModal">
+    <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
+        <h2 style="margin-top: 0; color: white;">Log Card Flip</h2>
+        <label>Card Name</label>
+        <input type="text" id="cardName" placeholder="e.g. Base Set Charizard">
+        
+        <button onclick="logToVault()">Confirm & Add</button>
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, setDoc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
     // Your specific Firebase configuration
     const firebaseConfig = {
@@ -166,10 +199,63 @@
     const db = getFirestore(app);
     const vaultCollection = collection(db, "obsidian_cards");
 
+    // --- USER LOGIN LOGIC ---
+    let currentUser = localStorage.getItem('obsidian_username');
+
+    // Check if user is already saved on this phone
+    if (currentUser) {
+        document.getElementById('mainApp').style.display = 'block';
+    } else {
+        document.getElementById('loginModal').style.display = 'flex';
+    }
+
+    window.handleLogin = async function() {
+        const inputName = document.getElementById('usernameInput').value.trim();
+        if (!inputName) return alert("Please enter a name!");
+
+        const btn = document.getElementById('loginBtn');
+        btn.innerText = "Checking...";
+        btn.style.opacity = "0.5";
+
+        const userKey = inputName.toLowerCase();
+        const userRef = doc(db, "obsidian_users", userKey);
+        
+        try {
+            const userDoc = await getDoc(userRef);
+            
+            if (userDoc.exists()) {
+                alert(`Welcome back, ${inputName}!`);
+            } else {
+                // Register them in the database
+                await setDoc(userRef, {
+                    username: inputName,
+                    registeredAt: Date.now()
+                });
+                alert(`New user registered: ${inputName}`);
+            }
+
+            // Save to phone memory and load app
+            localStorage.setItem('obsidian_username', inputName);
+            currentUser = inputName;
+            
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+
+        } catch (error) {
+            console.error("Login Error:", error);
+            alert("Connection error. Make sure your database rules are set to true!");
+            btn.innerText = "Enter Vault";
+            btn.style.opacity = "1";
+        }
+    };
+
     // --- LIVE CALCULATOR LOGIC ---
     window.calculate = function() {
-        const buy = parseFloat(document.getElementById('buyPrice').value) || 0;
-        const collectr = parseFloat(document.getElementById('collectrPrice').value) || 0;
+        const buyInput = document.getElementById('buyPrice').value;
+        const collectrInput = document.getElementById('collectrPrice').value;
+
+        const buy = parseFloat(buyInput) || 0;
+        const collectr = parseFloat(collectrInput) || 0;
         
         const payout = collectr * 0.85;
         const profit = payout - buy;
@@ -177,43 +263,68 @@
         document.getElementById('previewPayout').innerText = `$${payout.toFixed(2)}`;
         
         const profitEl = document.getElementById('previewProfit');
-        profitEl.innerText = `${profit >= 0 ? '+' : '-'}$${Math.abs(profit).toFixed(2)}`;
-        profitEl.style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+        
+        if (!buyInput && !collectrInput) {
+            profitEl.className = 'profit-val neutral';
+            profitEl.innerText = '$0.00';
+            return;
+        }
+
+        const isPositive = profit >= 0;
+        profitEl.className = `profit-val ${isPositive ? 'positive' : 'negative'}`;
+        profitEl.innerText = `${isPositive ? '+' : '-'}$${Math.abs(profit).toFixed(2)}`;
     };
 
-    // --- ADD TO FIREBASE ---
+    // --- MODAL LOGIC FOR ADDING CARDS ---
+    window.openModal = function() {
+        const buy = document.getElementById('buyPrice').value;
+        const collectr = document.getElementById('collectrPrice').value;
+        
+        if (!buy || !collectr) {
+            alert("Enter a Buy Price and Collectr Value first!");
+            return;
+        }
+        document.getElementById('addModal').style.display = 'flex';
+        document.getElementById('cardName').focus();
+    };
+
+    window.closeModal = function() {
+        document.getElementById('addModal').style.display = 'none';
+        document.getElementById('cardName').value = '';
+    };
+
+    // --- ADD CARD TO FIREBASE ---
     window.logToVault = async function() {
         const name = document.getElementById('cardName').value;
         const buy = parseFloat(document.getElementById('buyPrice').value);
         const collectr = parseFloat(document.getElementById('collectrPrice').value);
-        const buyer = document.getElementById('buyerName').value;
 
-        if (!name || !buy || !collectr) return alert("Please fill out all fields!");
+        if (!name) return alert("Please enter a card name!");
 
         const payout = collectr * 0.85;
         const profit = payout - buy;
 
-        // Save to cloud
+        // Save to cloud using the registered username
         await addDoc(vaultCollection, {
             name: name,
             buyPrice: buy,
             collectrPrice: collectr,
             payout: payout,
             profit: profit,
-            buyer: buyer,
+            buyer: currentUser,
             status: "In Hand",
             dateAdded: new Date().toLocaleDateString(),
             timestamp: Date.now()
         });
 
-        // Clear form
-        document.getElementById('cardName').value = '';
+        // Close modal and clear all forms ready for next card
+        closeModal();
         document.getElementById('buyPrice').value = '';
         document.getElementById('collectrPrice').value = '';
-        window.calculate();
+        window.calculate(); // Reset profit display
     };
 
-    // --- REAL-TIME SYNC (READ FROM FIREBASE) ---
+    // --- REAL-TIME SYNC (READ CARDS FROM FIREBASE) ---
     const q = query(vaultCollection, orderBy("timestamp", "desc"));
     
     onSnapshot(q, (snapshot) => {
@@ -231,7 +342,10 @@
             
             const isSold = data.status === "Sold";
             const btnClass = isSold ? "status-toggle sold" : "status-toggle";
-            const btnText = isSold ? "✓ Sold to Obsidian" : "In Hand";
+            const btnText = isSold ? "✓ Sold" : "In Hand";
+            
+            const isPositive = data.profit >= 0;
+            const profitColor = isPositive ? "var(--success)" : "var(--danger)";
 
             listEl.innerHTML += `
                 <div class="vault-item" style="opacity: ${isSold ? '0.6' : '1'}">
@@ -245,7 +359,7 @@
                     
                     <div style="display:flex; justify-content:space-between; align-items:flex-end;">
                         <button class="${btnClass}" onclick="toggleStatus('${id}', '${data.status}')">${btnText}</button>
-                        <div class="item-profit">+$${data.profit.toFixed(2)}</div>
+                        <div class="item-profit" style="color: ${profitColor}">${isPositive ? '+' : '-'}$${Math.abs(data.profit).toFixed(2)}</div>
                     </div>
                 </div>
             `;
