@@ -95,6 +95,7 @@
         .status-toggle {
             background: transparent; border: 1px solid var(--label); color: var(--label);
             padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; width: auto; margin-top: 10px;
+            cursor: pointer;
         }
         .status-toggle.sold { background: var(--success); color: #0f172a; border: none; }
     </style>
@@ -147,17 +148,17 @@
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-    // --- PASTE YOUR FIREBASE CONFIG HERE ---
+    // Your specific Firebase configuration
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyAFBXf5X9_F8EzO7jj4zW8WIbOC3LIJHO8",
+        authDomain: "obsidian-calculator-3468f.firebaseapp.com",
+        projectId: "obsidian-calculator-3468f",
+        storageBucket: "obsidian-calculator-3468f.firebasestorage.app",
+        messagingSenderId: "184324140376",
+        appId: "1:184324140376:web:9dd100bb9acdef0add892d"
     };
 
     // Initialize Firebase
@@ -213,7 +214,6 @@
     };
 
     // --- REAL-TIME SYNC (READ FROM FIREBASE) ---
-    // Orders items by newest first
     const q = query(vaultCollection, orderBy("timestamp", "desc"));
     
     onSnapshot(q, (snapshot) => {
@@ -239,7 +239,7 @@
                         <span class="item-name">${data.name}</span>
                         <span class="item-buyer">${data.buyer} • ${data.dateAdded}</span>
                     </div>
-                    <div class="item-row"><span>Buy Price (Cash):</span> <span>$${data.buyPrice.toFixed(2)}</span></div>
+                    <div class="item-row"><span>Buy Price:</span> <span>$${data.buyPrice.toFixed(2)}</span></div>
                     <div class="item-row"><span>Collectr Value:</span> <span>$${data.collectrPrice.toFixed(2)}</span></div>
                     <div class="item-row"><span>85% Payout:</span> <span>$${data.payout.toFixed(2)}</span></div>
                     
