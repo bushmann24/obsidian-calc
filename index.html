@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obsidian Calc</title>
+    <title>Obsidian Shared Vault</title>
     <style>
-        /* Mobile App Styling */
         :root {
             --obsidian-primary: #8b5cf6;
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
             --label: #94a3b8;
-            --danger: #ef4444;
             --success: #10b981;
+            --danger: #ef4444;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
@@ -24,166 +23,242 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
-            box-sizing: border-box;
         }
-        .app-container {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        /* Dashboard Header */
-        .dashboard {
-            background: var(--obsidian-primary);
-            color: white;
-            padding: 25px 20px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3);
-        }
-        .dashboard h1 { margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
-
-        /* Calculator Card */
+        .app-container { width: 100%; max-width: 450px; padding-bottom: 50px; }
+        
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: var(--obsidian-primary); margin: 0; font-size: 2rem; }
+        
         .card {
             background: var(--card);
-            padding: 25px 20px;
-            border-radius: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        label { 
-            display: block; 
-            font-size: 0.85rem; 
-            font-weight: 600; 
-            margin-bottom: 8px; 
-            color: var(--label); 
-            margin-top: 15px; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        label { display: block; font-size: 0.85rem; color: var(--label); margin: 15px 0 5px 0; font-weight: bold; text-transform: uppercase; }
         label:first-child { margin-top: 0; }
         
-        input {
+        input, select {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border: 1px solid #334155;
-            border-radius: 12px;
-            box-sizing: border-box;
-            font-size: 1.1rem;
-            background: #0f172a;
+            border-radius: 8px;
+            background: var(--bg);
             color: white;
-            font-weight: 600;
-            transition: border-color 0.2s;
-        }
-        input:focus {
-            outline: none;
-            border-color: var(--obsidian-primary);
-        }
-
-        /* Live Results Section */
-        .live-results {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px dashed #334155;
-        }
-        .item-stats {
-            display: flex;
-            justify-content: space-between;
             font-size: 1rem;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        .item-stats span:first-child {
-            color: var(--label);
-            font-weight: 500;
-        }
-        #obsPayoutDisplay {
-            font-size: 1.2rem;
-            color: white;
-            font-weight: 700;
+            box-sizing: border-box;
         }
         
-        .profit-container {
-            text-align: right;
+        .live-math {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #334155;
         }
-        .profit-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--label);
-            font-weight: 700;
-            margin-bottom: 5px;
+        .math-stat { color: var(--label); font-size: 0.9rem; }
+        .math-val { font-size: 1.2rem; font-weight: bold; color: white; }
+        .profit-val { font-size: 1.5rem; font-weight: bold; color: var(--success); }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--obsidian-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
         }
-        .profit {
-            font-size: 2.5rem;
-            font-weight: 900;
-            letter-spacing: -1px;
+        
+        /* The Vault List */
+        .vault-title { font-size: 1.2rem; color: var(--label); border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; }
+        .vault-item {
+            background: #151e2e;
+            border-left: 4px solid var(--obsidian-primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
         }
-        .profit.positive { color: var(--success); }
-        .profit.negative { color: var(--danger); }
-        .profit.neutral { color: white; }
-
+        .item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .item-name { font-weight: bold; font-size: 1.1rem; }
+        .item-buyer { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 12px; }
+        
+        .item-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--label); margin-bottom: 4px; }
+        .item-row span:last-child { color: white; font-weight: bold; }
+        .item-profit { font-size: 1.2rem; font-weight: bold; text-align: right; color: var(--success); margin-top: 10px; }
+        
+        .status-toggle {
+            background: transparent; border: 1px solid var(--label); color: var(--label);
+            padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; width: auto; margin-top: 10px;
+        }
+        .status-toggle.sold { background: var(--success); color: #0f172a; border: none; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    
-    <div class="dashboard">
-        <h1>Obsidian Calc</h1>
+    <div class="header">
+        <h1>Obsidian Vault</h1>
+        <p style="color: var(--label); margin-top: 5px;">Shared Card Tracker</p>
     </div>
 
     <div class="card">
-        <label>Buy Price</label>
-        <input type="number" id="obsBuy" placeholder="$ 0.00" step="0.01" oninput="calculateObsidian()">
+        <label>Card Name</label>
+        <input type="text" id="cardName" placeholder="e.g. Base Set Charizard">
         
-        <label>Collectr Value</label>
-        <input type="number" id="obsCollectr" placeholder="$ 0.00" step="0.01" oninput="calculateObsidian()">
-
-        <div class="live-results">
-            <div class="item-stats">
-                <span>Obsidian Payout (85%)</span> 
-                <span id="obsPayoutDisplay">$0.00</span>
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Buy Price</label>
+                <input type="number" id="buyPrice" placeholder="$0.00" oninput="calculate()">
             </div>
-            
-            <div class="profit-container">
-                <div class="profit-label">Net Profit</div>
-                <div class="profit neutral" id="obsProfitDisplay">$0.00</div>
+            <div style="flex: 1;">
+                <label>Collectr Value</label>
+                <input type="number" id="collectrPrice" placeholder="$0.00" oninput="calculate()">
             </div>
         </div>
+
+        <label>Who Bought It?</label>
+        <select id="buyerName">
+            <option value="Me">Me</option>
+            <option value="Friend">Friend</option>
+        </select>
+
+        <div class="live-math">
+            <span class="math-stat">Payout (85%)</span>
+            <span class="math-val" id="previewPayout">$0.00</span>
+        </div>
+        <div class="live-math" style="border: none; padding-top: 5px;">
+            <span class="math-stat">Net Profit</span>
+            <span class="profit-val" id="previewProfit">$0.00</span>
+        </div>
+
+        <button onclick="logToVault()">+ Add to Vault</button>
     </div>
 
+    <div class="vault-title">The Vault Collection</div>
+    <div id="vaultList">
+        <p style="text-align: center; color: #334155;">Loading shared vault...</p>
+    </div>
 </div>
 
-<script>
-    function calculateObsidian() {
-        const buyInput = document.getElementById('obsBuy').value;
-        const collectrInput = document.getElementById('obsCollectr').value;
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        const buy = parseFloat(buyInput) || 0;
-        const collectr = parseFloat(collectrInput) || 0;
+    // --- PASTE YOUR FIREBASE CONFIG HERE ---
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
 
-        // The Math
-        const payout = collectr * 0.85; // 85% of Collectr
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const vaultCollection = collection(db, "obsidian_cards");
+
+    // --- LIVE CALCULATOR LOGIC ---
+    window.calculate = function() {
+        const buy = parseFloat(document.getElementById('buyPrice').value) || 0;
+        const collectr = parseFloat(document.getElementById('collectrPrice').value) || 0;
+        
+        const payout = collectr * 0.85;
         const profit = payout - buy;
 
-        // Update Payout UI
-        document.getElementById('obsPayoutDisplay').innerText = `$${payout.toFixed(2)}`;
+        document.getElementById('previewPayout').innerText = `$${payout.toFixed(2)}`;
         
-        // Update Profit UI
-        const profitDisplay = document.getElementById('obsProfitDisplay');
-        
-        if (!buyInput && !collectrInput) {
-            profitDisplay.className = 'profit neutral';
-            profitDisplay.innerText = '$0.00';
+        const profitEl = document.getElementById('previewProfit');
+        profitEl.innerText = `${profit >= 0 ? '+' : '-'}$${Math.abs(profit).toFixed(2)}`;
+        profitEl.style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+    };
+
+    // --- ADD TO FIREBASE ---
+    window.logToVault = async function() {
+        const name = document.getElementById('cardName').value;
+        const buy = parseFloat(document.getElementById('buyPrice').value);
+        const collectr = parseFloat(document.getElementById('collectrPrice').value);
+        const buyer = document.getElementById('buyerName').value;
+
+        if (!name || !buy || !collectr) return alert("Please fill out all fields!");
+
+        const payout = collectr * 0.85;
+        const profit = payout - buy;
+
+        // Save to cloud
+        await addDoc(vaultCollection, {
+            name: name,
+            buyPrice: buy,
+            collectrPrice: collectr,
+            payout: payout,
+            profit: profit,
+            buyer: buyer,
+            status: "In Hand",
+            dateAdded: new Date().toLocaleDateString(),
+            timestamp: Date.now()
+        });
+
+        // Clear form
+        document.getElementById('cardName').value = '';
+        document.getElementById('buyPrice').value = '';
+        document.getElementById('collectrPrice').value = '';
+        window.calculate();
+    };
+
+    // --- REAL-TIME SYNC (READ FROM FIREBASE) ---
+    // Orders items by newest first
+    const q = query(vaultCollection, orderBy("timestamp", "desc"));
+    
+    onSnapshot(q, (snapshot) => {
+        const listEl = document.getElementById('vaultList');
+        listEl.innerHTML = ''; // Clear current list
+
+        if (snapshot.empty) {
+            listEl.innerHTML = '<p style="text-align:center; color:#64748b;">Vault is empty. Add a card!</p>';
             return;
         }
 
-        const isPositive = profit >= 0;
-        profitDisplay.className = `profit ${isPositive ? 'positive' : 'negative'}`;
-        profitDisplay.innerText = `${isPositive ? '+' : '-'}$${Math.abs(profit).toFixed(2)}`;
-    }
-</script>
+        snapshot.forEach((docSnapshot) => {
+            const data = docSnapshot.data();
+            const id = docSnapshot.id;
+            
+            const isSold = data.status === "Sold";
+            const btnClass = isSold ? "status-toggle sold" : "status-toggle";
+            const btnText = isSold ? "✓ Sold to Obsidian" : "In Hand";
 
+            listEl.innerHTML += `
+                <div class="vault-item" style="opacity: ${isSold ? '0.6' : '1'}">
+                    <div class="item-head">
+                        <span class="item-name">${data.name}</span>
+                        <span class="item-buyer">${data.buyer} • ${data.dateAdded}</span>
+                    </div>
+                    <div class="item-row"><span>Buy Price (Cash):</span> <span>$${data.buyPrice.toFixed(2)}</span></div>
+                    <div class="item-row"><span>Collectr Value:</span> <span>$${data.collectrPrice.toFixed(2)}</span></div>
+                    <div class="item-row"><span>85% Payout:</span> <span>$${data.payout.toFixed(2)}</span></div>
+                    
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                        <button class="${btnClass}" onclick="toggleStatus('${id}', '${data.status}')">${btnText}</button>
+                        <div class="item-profit">+$${data.profit.toFixed(2)}</div>
+                    </div>
+                </div>
+            `;
+        });
+    });
+
+    // --- UPDATE STATUS IN FIREBASE ---
+    window.toggleStatus = async function(id, currentStatus) {
+        const newStatus = currentStatus === "In Hand" ? "Sold" : "In Hand";
+        const cardRef = doc(db, "obsidian_cards", id);
+        await updateDoc(cardRef, { status: newStatus });
+    };
+
+</script>
 </body>
 </html>
