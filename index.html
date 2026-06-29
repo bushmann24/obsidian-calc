@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Obsidian Calculator</title>
     
-    <!-- PWA & Mobile App Config -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -40,11 +39,11 @@
         .app-container { width: 100%; max-width: 450px; padding-bottom: 60px; position: relative; }
         
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .header-top h1 { color: var(--obsidian-primary); margin: 0; font-size: 1.6rem; }
-        .header-actions { display: flex; gap: 8px; }
+        .header-top h1 { color: var(--obsidian-primary); margin: 0; font-size: 1.5rem; }
+        .header-actions { display: flex; gap: 6px; }
         .icon-btn {
-            width: 40px; height: 40px; background: var(--card); color: var(--text); border: 1px solid var(--border);
-            border-radius: 8px; font-size: 18px; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            width: 38px; height: 38px; background: var(--card); color: var(--text); border: 1px solid var(--border);
+            border-radius: 8px; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center;
         }
         .icon-btn.primary { background: var(--obsidian-primary); border-color: var(--obsidian-primary); }
 
@@ -103,16 +102,20 @@
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); }
         .user-row button { background: var(--card); border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
         
-        /* Flexbox for side-by-side buttons in the modal */
         .modal-btn-group { display: flex; gap: 10px; margin-top: 15px; }
         .modal-btn-group button { margin-top: 0; }
+
+        /* Saved Sites Styling */
+        .site-card { background: #151e2e; padding: 12px 14px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .site-link { color: #3b82f6; font-weight: bold; font-size: 1.05rem; text-decoration: none; display: block; margin-bottom: 4px; }
+        .site-link:hover { text-decoration: underline; }
+        .site-author { font-size: 0.72rem; color: var(--label); text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
 
 <div id="customAlert"></div>
 
-<!-- Login Modal -->
 <div class="modal-overlay" id="loginModal">
     <div class="card" style="width: 100%; max-width: 360px; margin: auto; text-align: center;">
         <h2 style="margin-top: 0; color: var(--obsidian-primary);">Obsidian Calculator</h2>
@@ -122,24 +125,22 @@
     </div>
 </div>
 
-<!-- Main App -->
 <div class="app-container" id="mainApp" style="display: none;">
     
     <div class="header-top">
-        <h1>Obsidian Calculator</h1>
+        <h1>Obsidian Calc</h1>
         <div class="header-actions">
-            <button class="icon-btn" onclick="openUsersModal()">⚙️</button>
-            <button class="icon-btn primary" onclick="openAddModal()">+</button>
+            <button class="icon-btn" onclick="openSitesModal()" title="Shared Websites">🌐</button>
+            <button class="icon-btn" onclick="openUsersModal()" title="Users Roster">⚙️</button>
+            <button class="icon-btn primary" onclick="openAddModal()" title="Log Card">+</button>
         </div>
     </div>
 
-    <!-- Snooping Banner -->
     <div id="snoopBanner" class="viewing-banner" style="display: none;">
         <span>Viewing: <span id="snoopName"></span></span>
         <button onclick="resetViewToSelf()">Exit View</button>
     </div>
 
-    <!-- Live Calculator Card -->
     <div class="card" id="liveCalcCard">
         <label>Buy Price</label>
         <input type="number" id="calcBuy" placeholder="$0.00" step="0.01" oninput="runLiveCalc()">
@@ -156,7 +157,6 @@
         </div>
     </div>
 
-    <!-- Dashboard Analytics -->
     <div class="stats-grid">
         <div class="stat-box"><div class="stat-label">Invested</div><div class="stat-val" id="statInvested">$0.00</div></div>
         <div class="stat-box"><div class="stat-label">Payout</div><div class="stat-val" id="statPayout">$0.00</div></div>
@@ -164,7 +164,6 @@
         <div class="stat-box"><div class="stat-label">Cards Tracked</div><div class="stat-val" id="statCount">0</div></div>
     </div>
 
-    <!-- Inventory Section -->
     <div class="list-header">
         <div class="list-tabs">
             <button class="tab active" id="tabActive" onclick="setListTab('Active')">Active List</button>
@@ -175,7 +174,23 @@
     <div id="inventoryList"><p style="text-align: center; color: var(--label);">Loading cards...</p></div>
 </div>
 
-<!-- Modal: Add New Card -->
+<div class="modal-overlay" id="sitesModal">
+    <div class="card" style="width: 100%; max-width: 380px; margin: auto; max-height: 85vh; display: flex; flex-direction: column;">
+        <h3 style="margin-top: 0; color: white;">Shared Card Shops</h3>
+        <p style="font-size: 0.8rem; color: var(--label); margin-top: -10px; margin-bottom: 15px;">Global supplier directory visible to both of you.</p>
+        
+        <div style="display:flex; gap:8px; margin-bottom: 8px;">
+            <input type="text" id="newSiteName" placeholder="Shop Name" style="flex:1;">
+            <input type="url" id="newSiteUrl" placeholder="https://..." style="flex:1.3;">
+        </div>
+        <button class="action-btn" onclick="saveNewSite()" style="margin-top:4px; margin-bottom:15px; padding:10px;">+ Add Website</button>
+
+        <div id="sitesListContainer" style="overflow-y: auto; flex: 1; border-top: 1px dashed var(--border); padding-top:12px;"></div>
+        
+        <button class="action-btn cancel-btn" onclick="closeAllModals()">Close</button>
+    </div>
+</div>
+
 <div class="modal-overlay" id="addModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
         <h3 style="margin-top: 0; color: white;">Log Card Purchase</h3>
@@ -193,7 +208,6 @@
     </div>
 </div>
 
-<!-- Modal: Edit My Item -->
 <div class="modal-overlay" id="actionModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto;">
         <h3 id="actionTitle" style="margin-top: 0; color: white;">Manage Item</h3>
@@ -210,7 +224,6 @@
     </div>
 </div>
 
-<!-- Modal: View Only Receipt (Snooping Friend's Card) -->
 <div class="modal-overlay" id="viewReceiptModal">
     <div class="card" style="width: 100%; max-width: 360px; margin: auto; border-top: 4px solid #3b82f6;">
         <div style="display:flex; justify-content:space-between; color:var(--label); font-size:0.75rem; font-weight:bold;">
@@ -232,7 +245,6 @@
     </div>
 </div>
 
-<!-- Modal: Users Roster -->
 <div class="modal-overlay" id="usersModal">
     <div class="card" style="width: 100%; max-width: 380px; margin: auto; max-height: 80vh; display: flex; flex-direction: column;">
         <h3 style="margin-top: 0; color: white;">Registered Users</h3>
@@ -247,7 +259,6 @@
     </div>
 </div>
 
-<!-- Firebase SDKs -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, setDoc, getDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
@@ -265,6 +276,7 @@
     const db = getFirestore(app);
     const cardsRef = collection(db, "obsidian_cards");
     const usersRef = collection(db, "obsidian_users");
+    const sitesRef = collection(db, "obsidian_sites");
 
     let myUser = localStorage.getItem('obsidian_username');
     let viewingUser = myUser; 
@@ -342,6 +354,70 @@
         document.getElementById('addName').value = ''; document.getElementById('addBuy').value = ''; document.getElementById('addCollectr').value = '';
     };
 
+    // --- SITES DIRECTORY LOGIC ---
+    window.openSitesModal = () => {
+        document.getElementById('sitesModal').style.display = 'flex';
+    };
+
+    window.saveNewSite = async () => {
+        const nm = document.getElementById('newSiteName').value.trim();
+        let url = document.getElementById('newSiteUrl').value.trim();
+
+        if (!nm || !url) return showAlert("Enter a name and URL");
+        
+        // Auto-fix missing https:// protocol
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+        }
+
+        await addDoc(sitesRef, {
+            name: nm,
+            url: url,
+            submittedBy: myUser,
+            ts: Date.now()
+        });
+
+        document.getElementById('newSiteName').value = '';
+        document.getElementById('newSiteUrl').value = '';
+        showAlert("Website logged");
+    };
+
+    window.deleteSite = async (id) => {
+        if (!confirm("Remove this website?")) return;
+        await deleteDoc(doc(db, "obsidian_sites", id));
+        showAlert("Site removed");
+    };
+
+    // Live global listener for sites
+    onSnapshot(query(sitesRef, orderBy("ts", "desc")), (snap) => {
+        const container = document.getElementById('sitesListContainer');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (snap.empty) {
+            container.innerHTML = '<p style="text-align:center; color:var(--label); margin-top:20px;">No websites saved yet.</p>';
+            return;
+        }
+
+        snap.forEach(docSnap => {
+            const s = docSnap.data();
+            const id = docSnap.id;
+            const author = s.submittedBy || 'Unknown';
+            const isMine = author.toLowerCase() === myUser;
+
+            container.innerHTML += `
+                <div class="site-card">
+                    <div style="overflow:hidden; padding-right:8px;">
+                        <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="site-link">${s.name} ↗</a>
+                        <span class="site-author">Logged by ${author}</span>
+                    </div>
+                    ${isMine ? `<button onclick="deleteSite('${id}')" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:1.1rem; padding:4px;">🗑️</button>` : ''}
+                </div>
+            `;
+        });
+    });
+
+    // --- CARDS LISTENER ---
     onSnapshot(query(cardsRef, orderBy("ts", "desc")), (snap) => {
         allCardsMemory = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         processAndRender();
@@ -527,7 +603,6 @@
 
 </script>
 
-<!-- Chrome Android Service Worker Hook -->
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js');
