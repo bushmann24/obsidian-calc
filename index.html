@@ -61,13 +61,16 @@
         label { display: block; font-size: 0.8rem; color: var(--label); margin: 12px 0 6px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
         label:first-child { margin-top: 0; }
         
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: white; font-size: 1.05rem; box-sizing: border-box; font-weight: 600; }
-        input:focus { outline: none; border-color: var(--obsidian-primary); }
+        input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: white; font-size: 1.05rem; box-sizing: border-box; font-weight: 600; }
+        input:focus, select:focus { outline: none; border-color: var(--obsidian-primary); }
         
-        .stats-grid { display: grid; grid-cols-2; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        /* 5-Box Dashboard Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-        .stat-label { font-size: 0.7rem; color: var(--label); text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
+        .stat-box.full-width { grid-column: 1 / -1; padding: 16px 12px; } /* Stretches across both columns */
+        .stat-label { font-size: 0.7rem; color: var(--label); text-transform: uppercase; font-weight: bold; margin-bottom: 4px; letter-spacing: 0.5px; }
         .stat-val { font-size: 1.2rem; font-weight: 800; color: white; }
+        .stat-box.full-width .stat-val { font-size: 1.6rem; font-weight: 900; }
 
         .live-math { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 12px; border-top: 1px dashed var(--border); }
         .math-stat { color: var(--label); font-size: 0.9rem; font-weight: 600; }
@@ -101,6 +104,8 @@
         .item-profit { font-size: 1.1rem; font-weight: bold; text-align: right; margin-top: 8px; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        #confirmModal { z-index: 1500; }
+
         #customAlert { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--obsidian-primary); color: white; padding: 12px 20px; border-radius: 8px; font-weight: bold; z-index: 2000; box-shadow: 0 4px 6px rgba(0,0,0,0.3); text-align: center; }
         
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); }
@@ -109,7 +114,6 @@
         .modal-btn-group { display: flex; gap: 10px; margin-top: 15px; }
         .modal-btn-group button { margin-top: 0; }
 
-        /* Saved Sites Styling */
         .site-card { background: #151e2e; padding: 12px 14px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .site-link { color: #3b82f6; font-weight: bold; font-size: 1.05rem; text-decoration: none; display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
         .site-link:hover { text-decoration: underline; }
@@ -129,6 +133,17 @@
         <p style="color: var(--label); font-size: 0.85rem; margin-bottom: 15px;">Username Below</p>
         <input type="text" id="usernameInput" placeholder="Username" style="text-align: center;">
         <button class="action-btn" id="loginBtn" onclick="handleLogin()">Login</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+    <div class="card" style="width: 100%; max-width: 310px; margin: auto; text-align: center; border-top: 3px solid var(--danger);">
+        <h3 id="confirmTitle" style="margin-top: 0; color: white; font-size: 1.2rem;">Are you sure?</h3>
+        <p id="confirmMessage" style="color: var(--label); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;"></p>
+        <div class="modal-btn-group">
+            <button class="action-btn danger-btn" id="confirmExecuteBtn">Delete</button>
+            <button class="action-btn cancel-btn" onclick="closeConfirmOnly()">Cancel</button>
+        </div>
     </div>
 </div>
 
@@ -172,9 +187,10 @@
 
     <div class="stats-grid">
         <div class="stat-box"><div class="stat-label">Invested</div><div class="stat-val" id="statInvested">$0.00</div></div>
-        <div class="stat-box"><div class="stat-label">Payout</div><div class="stat-val" id="statPayout">$0.00</div></div>
-        <div class="stat-box"><div class="stat-label">Profit</div><div class="stat-val" id="statProfit" style="color: var(--success);">$0.00</div></div>
+        <div class="stat-box"><div class="stat-label">Collectr Value</div><div class="stat-val" id="statCollectr">$0.00</div></div>
         <div class="stat-box"><div class="stat-label">Cards Tracked</div><div class="stat-val" id="statCount">0</div></div>
+        <div class="stat-box"><div class="stat-label">85% Payout</div><div class="stat-val" id="statPayout">$0.00</div></div>
+        <div class="stat-box full-width"><div class="stat-label">Profit</div><div class="stat-val" id="statProfit" style="color: var(--success);">$0.00</div></div>
     </div>
 
     <div class="list-header">
@@ -211,6 +227,10 @@
         <input type="date" id="addDate">
         <label>Item Name</label>
         <input type="text" id="addName" placeholder="e.g. Charizard Ex">
+        
+        <label>Where Buy</label>
+        <select id="addSiteSelect"></select>
+
         <label>Buy Price</label>
         <input type="number" id="addBuy" placeholder="$0.00" step="0.01">
         <label>Collectr Value</label>
@@ -227,6 +247,7 @@
         <input type="hidden" id="actionId">
         
         <label>Item Name</label><input type="text" id="editName">
+        <label>Where Buy</label><select id="editSiteSelect"></select>
         <label>Buy Price</label><input type="number" id="editBuy" step="0.01">
         <label>Collectr Value</label><input type="number" id="editCollectr" step="0.01">
 
@@ -245,6 +266,7 @@
         </div>
         <h2 id="receiptName" style="margin: 6px 0 16px 0; color:white; font-size:1.3rem;"></h2>
         
+        <div class="item-row"><span>Where Bought:</span> <span id="receiptWhere" style="color:#3b82f6;"></span></div>
         <div class="item-row"><span>Buy Price:</span> <span id="receiptBuy"></span></div>
         <div class="item-row"><span>Collectr Value:</span> <span id="receiptCollectr"></span></div>
         <div class="item-row"><span>Obsidian Payout:</span> <span id="receiptPayout"></span></div>
@@ -295,7 +317,9 @@
     let viewingUser = myUser; 
     let currentTab = 'Active'; 
     let allCardsMemory = [];
+    let allSitesMemory = [];
     let alertTimer;
+    let pendingConfirmAction = null;
 
     window.showAlert = (msg) => {
         const el = document.getElementById('customAlert');
@@ -304,6 +328,25 @@
         alertTimer = setTimeout(() => el.style.display = 'none', 2500);
     };
 
+    // --- UNIVERSAL CONFIRM ENGINE ---
+    window.openConfirm = (title, msg, onExecute) => {
+        document.getElementById('confirmTitle').innerText = title;
+        document.getElementById('confirmMessage').innerText = msg;
+        pendingConfirmAction = onExecute;
+        document.getElementById('confirmModal').style.display = 'flex';
+    };
+
+    window.closeConfirmOnly = () => {
+        document.getElementById('confirmModal').style.display = 'none';
+        pendingConfirmAction = null;
+    };
+
+    document.getElementById('confirmExecuteBtn').onclick = async () => {
+        if (pendingConfirmAction) await pendingConfirmAction();
+        closeConfirmOnly();
+    };
+
+    // --- AUTH ENGINE ---
     if (myUser) { viewingUser = myUser; document.getElementById('mainApp').style.display = 'block'; }
     else document.getElementById('loginModal').style.display = 'flex';
 
@@ -328,6 +371,7 @@
         window.location.reload();
     };
 
+    // --- LIVE CALC ---
     window.runLiveCalc = () => {
         const b = parseFloat(document.getElementById('calcBuy').value) || 0;
         const c = parseFloat(document.getElementById('calcCollectr').value) || 0;
@@ -351,6 +395,7 @@
     window.saveNewCard = async () => {
         const dt = document.getElementById('addDate').value;
         const nm = document.getElementById('addName').value.trim();
+        const wb = document.getElementById('addSiteSelect').value || 'Local Shop / Trade';
         const b = parseFloat(document.getElementById('addBuy').value);
         const c = parseFloat(document.getElementById('addCollectr').value);
 
@@ -359,6 +404,7 @@
         await addDoc(cardsRef, {
             name: nm, buyPrice: b, collectrPrice: c,
             payout: c * 0.85, profit: (c * 0.85) - b,
+            whereBought: wb,
             owner: myUser, status: "Active",
             date: dt, ts: Date.now()
         });
@@ -383,10 +429,7 @@
         }
 
         await addDoc(sitesRef, {
-            name: nm,
-            url: url,
-            submittedBy: myUser,
-            ts: Date.now()
+            name: nm, url: url, submittedBy: myUser, ts: Date.now()
         });
 
         document.getElementById('newSiteName').value = '';
@@ -394,48 +437,70 @@
         showAlert("Website logged");
     };
 
-    window.deleteSite = async (id) => {
-        if (!confirm("Remove this website?")) return;
-        await deleteDoc(doc(db, "obsidian_sites", id));
-        showAlert("Site removed");
+    window.deleteSite = (id) => {
+        openConfirm("Remove Website?", "Permanently delete this shop link for both of you?", async () => {
+            await deleteDoc(doc(db, "obsidian_sites", id));
+            showAlert("Site removed");
+        });
     };
+
+    function updateSiteSelectElements() {
+        const addSel = document.getElementById('addSiteSelect');
+        const editSel = document.getElementById('editSiteSelect');
+        let markup = '<option value="Local Shop / Trade">Local Shop / Trade</option>';
+        
+        allSitesMemory.forEach(siteName => {
+            markup += `<option value="${siteName}">${siteName}</option>`;
+        });
+
+        if (addSel) addSel.innerHTML = markup;
+        if (editSel) editSel.innerHTML = markup;
+    }
 
     onSnapshot(query(sitesRef, orderBy("ts", "desc")), (snap) => {
         const container = document.getElementById('sitesListContainer');
-        if (!container) return;
-        container.innerHTML = '';
-
-        if (snap.empty) {
-            container.innerHTML = '<p style="text-align:center; color:var(--label); margin-top:20px;">No websites saved yet.</p>';
-            return;
-        }
+        allSitesMemory = [];
 
         snap.forEach(docSnap => {
             const s = docSnap.data();
+            allSitesMemory.push(s.name);
             const id = docSnap.id;
             const author = s.submittedBy || 'Unknown';
             const isMine = author.toLowerCase() === myUser;
 
-            container.innerHTML += `
-                <div class="site-card">
-                    <div style="overflow:hidden; padding-right:8px;">
-                        <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="site-link">
-                            ${s.name}
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-                        </a>
-                        <span class="site-author">Logged by ${author}</span>
+            if (container) {
+                if (snap.empty) {
+                    container.innerHTML = '<p style="text-align:center; color:var(--label); margin-top:20px;">No websites saved yet.</p>';
+                } else if (allSitesMemory.length === 1) {
+                    container.innerHTML = ''; 
+                }
+                container.innerHTML += `
+                    <div class="site-card">
+                        <div style="overflow:hidden; padding-right:8px;">
+                            <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="site-link">
+                                ${s.name}
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                            </a>
+                            <span class="site-author">Logged by ${author}</span>
+                        </div>
+                        ${isMine ? `
+                            <button onclick="deleteSite('${id}')" class="trash-btn" title="Delete">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        ` : ''}
                     </div>
-                    ${isMine ? `
-                        <button onclick="deleteSite('${id}')" class="trash-btn" title="Delete">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        </button>
-                    ` : ''}
-                </div>
-            `;
+                `;
+            }
         });
+        
+        if (snap.empty && container) {
+            container.innerHTML = '<p style="text-align:center; color:var(--label); margin-top:20px;">No websites saved yet.</p>';
+        }
+
+        updateSiteSelectElements();
     });
 
-    // --- CARDS LISTENER ---
+    // --- CARDS RENDER ENGINE ---
     onSnapshot(query(cardsRef, orderBy("ts", "desc")), (snap) => {
         allCardsMemory = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         processAndRender();
@@ -458,15 +523,23 @@
         });
 
         const activeOnly = userCards.filter(c => c.status === "Active" || !c.status || c.status === "In Hand");
-        let tInvest = 0, tPay = 0, tProf = 0;
-        activeOnly.forEach(c => { tInvest += c.buyPrice; tPay += c.payout; tProf += c.profit; });
+        let tInvest = 0, tCollectr = 0, tPay = 0, tProf = 0;
+        activeOnly.forEach(c => { 
+            tInvest += c.buyPrice; 
+            tCollectr += (c.collectrPrice || 0);
+            tPay += c.payout; 
+            tProf += c.profit; 
+        });
 
+        // Populate 5-Box Grid
         document.getElementById('statInvested').innerText = `$${tInvest.toFixed(2)}`;
+        document.getElementById('statCollectr').innerText = `$${tCollectr.toFixed(2)}`;
+        document.getElementById('statCount').innerText = activeOnly.length;
         document.getElementById('statPayout').innerText = `$${tPay.toFixed(2)}`;
+        
         const prEl = document.getElementById('statProfit');
         prEl.innerText = `${tProf >= 0 ? '+' : '-'}$${Math.abs(tProf).toFixed(2)}`;
         prEl.style.color = tProf >= 0 ? 'var(--success)' : 'var(--danger)';
-        document.getElementById('statCount').innerText = activeOnly.length;
 
         const displayCards = userCards.filter(c => {
             if (currentTab === 'Active') return c.status === "Active" || !c.status || c.status === "In Hand";
@@ -483,6 +556,7 @@
             const pCol = isPos ? 'var(--success)' : 'var(--danger)';
             const soldClass = c.status === 'Sold' ? 'vault-item sold-item' : 'vault-item';
             const dStr = c.date || c.dateAdded || '';
+            const whereStr = c.whereBought || 'Local Shop / Trade';
 
             listEl.innerHTML += `
                 <div class="${soldClass}" onclick="handleCardClick('${c.id}')">
@@ -490,6 +564,7 @@
                         <span class="item-name">${c.name}</span>
                         <span class="item-date">${dStr}</span>
                     </div>
+                    <div class="item-row"><span>Where Bought:</span> <span>${whereStr}</span></div>
                     <div class="item-row"><span>Buy Price:</span> <span>$${c.buyPrice.toFixed(2)}</span></div>
                     <div class="item-row"><span>Collectr Value:</span> <span>$${c.collectrPrice.toFixed(2)}</span></div>
                     <div class="item-row"><span>Obsidian Payout:</span> <span>$${c.payout.toFixed(2)}</span></div>
@@ -507,6 +582,7 @@
 
         if (cardOwner !== myUser) {
             document.getElementById('receiptName').innerText = c.name;
+            document.getElementById('receiptWhere').innerText = c.whereBought || 'Local Shop / Trade';
             document.getElementById('receiptBuy').innerText = `$${c.buyPrice.toFixed(2)}`;
             document.getElementById('receiptCollectr').innerText = `$${c.collectrPrice.toFixed(2)}`;
             document.getElementById('receiptPayout').innerText = `$${c.payout.toFixed(2)}`;
@@ -522,6 +598,7 @@
 
         document.getElementById('actionId').value = c.id;
         document.getElementById('editName').value = c.name;
+        document.getElementById('editSiteSelect').value = c.whereBought || 'Local Shop / Trade';
         document.getElementById('editBuy').value = c.buyPrice;
         document.getElementById('editCollectr').value = c.collectrPrice;
         
@@ -547,6 +624,7 @@
     window.updateCardDetails = async () => {
         const id = document.getElementById('actionId').value;
         const nm = document.getElementById('editName').value.trim();
+        const wb = document.getElementById('editSiteSelect').value || 'Local Shop / Trade';
         const b = parseFloat(document.getElementById('editBuy').value);
         const c = parseFloat(document.getElementById('editCollectr').value);
 
@@ -554,17 +632,20 @@
 
         await updateDoc(doc(db, "obsidian_cards", id), {
             name: nm, buyPrice: b, collectrPrice: c,
+            whereBought: wb,
             payout: c * 0.85, profit: (c * 0.85) - b
         });
 
         closeAllModals(); showAlert("Updated");
     };
 
-    window.deleteCardRecord = async () => {
-        if (!confirm("Permanently delete this record?")) return;
+    window.deleteCardRecord = () => {
         const id = document.getElementById('actionId').value;
-        await deleteDoc(doc(db, "obsidian_cards", id));
-        closeAllModals(); showAlert("Deleted");
+        openConfirm("Delete Card?", "Permanently wipe this flip record from your list?", async () => {
+            await deleteDoc(doc(db, "obsidian_cards", id));
+            closeAllModals();
+            showAlert("Deleted");
+        });
     };
 
     window.openUsersModal = async () => {
