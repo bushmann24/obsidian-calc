@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Obsidian Calculator</title>
+    <title>Slab Calc</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -129,7 +129,7 @@
 
 <div class="modal-overlay" id="loginModal">
     <div class="card" style="width: 100%; max-width: 360px; margin: auto; text-align: center;">
-        <h2 style="margin-top: 0; color: var(--obsidian-primary);">Obsidian Calculator</h2>
+        <h2 style="margin-top: 0; color: var(--obsidian-primary);">Slab Calc</h2>
         <p style="color: var(--label); font-size: 0.85rem; margin-bottom: 15px;">Username Below</p>
         <input type="text" id="usernameInput" placeholder="Username" style="text-align: center;">
         <button class="action-btn" id="loginBtn" onclick="handleLogin()">Login</button>
@@ -150,7 +150,7 @@
 <div class="app-container" id="mainApp" style="display: none;">
     
     <div class="header-top">
-        <h1>Obsidian Calc</h1>
+        <h1>Slab Calc</h1>
         <div class="header-actions">
             <button class="icon-btn" onclick="openSitesModal()" title="Shared Websites">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
@@ -176,7 +176,7 @@
         <input type="number" id="calcCollectr" placeholder="$0.00" step="0.01" oninput="runLiveCalc()">
 
         <div class="live-math">
-            <span class="math-stat">Obsidian Payout (85%)</span>
+            <span class="math-stat">Slab Payout (80%)</span>
             <span class="math-val" id="previewPayout">$0.00</span>
         </div>
         <div class="profit-container">
@@ -189,7 +189,7 @@
         <div class="stat-box"><div class="stat-label">Invested</div><div class="stat-val" id="statInvested">$0.00</div></div>
         <div class="stat-box"><div class="stat-label">Collectr Value</div><div class="stat-val" id="statCollectr">$0.00</div></div>
         <div class="stat-box"><div class="stat-label">Cards Tracked</div><div class="stat-val" id="statCount">0</div></div>
-        <div class="stat-box"><div class="stat-label">85% Payout</div><div class="stat-val" id="statPayout">$0.00</div></div>
+        <div class="stat-box"><div class="stat-label">80% Payout</div><div class="stat-val" id="statPayout">$0.00</div></div>
         <div class="stat-box full-width"><div class="stat-label">Profit</div><div class="stat-val" id="statProfit" style="color: var(--success);">$0.00</div></div>
     </div>
 
@@ -269,7 +269,7 @@
         <div class="item-row"><span>Where Bought:</span> <span id="receiptWhere" style="color:#3b82f6;"></span></div>
         <div class="item-row"><span>Buy Price:</span> <span id="receiptBuy"></span></div>
         <div class="item-row"><span>Collectr Value:</span> <span id="receiptCollectr"></span></div>
-        <div class="item-row"><span>Obsidian Payout:</span> <span id="receiptPayout"></span></div>
+        <div class="item-row"><span>Slab Payout:</span> <span id="receiptPayout"></span></div>
         
         <div style="margin-top:14px; padding-top:12px; border-top:1px dashed var(--border); display:flex; justify-content:space-between; align-items:center;">
             <span style="color:var(--label); font-weight:bold;">Net Profit</span>
@@ -309,6 +309,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    // Data structures left as "obsidian" intentionally so you don't lose any past saved data!
     const cardsRef = collection(db, "obsidian_cards");
     const usersRef = collection(db, "obsidian_users");
     const sitesRef = collection(db, "obsidian_sites");
@@ -371,11 +372,11 @@
         window.location.reload();
     };
 
-    // --- LIVE CALC ---
+    // --- LIVE CALC (Now 80%) ---
     window.runLiveCalc = () => {
         const b = parseFloat(document.getElementById('calcBuy').value) || 0;
         const c = parseFloat(document.getElementById('calcCollectr').value) || 0;
-        const p = c * 0.85; const pr = p - b;
+        const p = c * 0.80; const pr = p - b;
         document.getElementById('previewPayout').innerText = `$${p.toFixed(2)}`;
         const prEl = document.getElementById('previewProfit');
         if (!b && !c) { prEl.className = 'profit-val neutral'; prEl.innerText = '$0.00'; return; }
@@ -403,7 +404,7 @@
 
         await addDoc(cardsRef, {
             name: nm, buyPrice: b, collectrPrice: c,
-            payout: c * 0.85, profit: (c * 0.85) - b,
+            payout: c * 0.80, profit: (c * 0.80) - b,
             whereBought: wb,
             owner: myUser, status: "Active",
             date: dt, ts: Date.now()
@@ -524,11 +525,16 @@
 
         const activeOnly = userCards.filter(c => c.status === "Active" || !c.status || c.status === "In Hand");
         let tInvest = 0, tCollectr = 0, tPay = 0, tProf = 0;
+        
+        // Recalculating everything purely from the DB logic so 80% change is globally enforced
         activeOnly.forEach(c => { 
+            const realPayout = c.collectrPrice * 0.80;
+            const realProfit = realPayout - c.buyPrice;
+
             tInvest += c.buyPrice; 
             tCollectr += (c.collectrPrice || 0);
-            tPay += c.payout; 
-            tProf += c.profit; 
+            tPay += realPayout; 
+            tProf += realProfit; 
         });
 
         // Populate 5-Box Grid
@@ -552,7 +558,10 @@
         }
 
         displayCards.forEach(c => {
-            const isPos = c.profit >= 0;
+            const realPayout = c.collectrPrice * 0.80;
+            const realProfit = realPayout - c.buyPrice;
+
+            const isPos = realProfit >= 0;
             const pCol = isPos ? 'var(--success)' : 'var(--danger)';
             const soldClass = c.status === 'Sold' ? 'vault-item sold-item' : 'vault-item';
             const dStr = c.date || c.dateAdded || '';
@@ -567,8 +576,8 @@
                     <div class="item-row"><span>Where Bought:</span> <span>${whereStr}</span></div>
                     <div class="item-row"><span>Buy Price:</span> <span>$${c.buyPrice.toFixed(2)}</span></div>
                     <div class="item-row"><span>Collectr Value:</span> <span>$${c.collectrPrice.toFixed(2)}</span></div>
-                    <div class="item-row"><span>Obsidian Payout:</span> <span>$${c.payout.toFixed(2)}</span></div>
-                    <div class="item-profit" style="color:${pCol}">${isPos ? '+' : '-'}$${Math.abs(c.profit).toFixed(2)}</div>
+                    <div class="item-row"><span>Slab Payout:</span> <span>$${realPayout.toFixed(2)}</span></div>
+                    <div class="item-profit" style="color:${pCol}">${isPos ? '+' : '-'}$${Math.abs(realProfit).toFixed(2)}</div>
                 </div>
             `;
         });
@@ -579,17 +588,20 @@
         if (!c) return;
 
         const cardOwner = (c.owner || c.buyer || '').toLowerCase();
+        
+        const realPayout = c.collectrPrice * 0.80;
+        const realProfit = realPayout - c.buyPrice;
 
         if (cardOwner !== myUser) {
             document.getElementById('receiptName').innerText = c.name;
             document.getElementById('receiptWhere').innerText = c.whereBought || 'Local Shop / Trade';
             document.getElementById('receiptBuy').innerText = `$${c.buyPrice.toFixed(2)}`;
             document.getElementById('receiptCollectr').innerText = `$${c.collectrPrice.toFixed(2)}`;
-            document.getElementById('receiptPayout').innerText = `$${c.payout.toFixed(2)}`;
+            document.getElementById('receiptPayout').innerText = `$${realPayout.toFixed(2)}`;
             
             const rProf = document.getElementById('receiptProfit');
-            rProf.innerText = `${c.profit >= 0 ? '+' : '-'}$${Math.abs(c.profit).toFixed(2)}`;
-            rProf.style.color = c.profit >= 0 ? 'var(--success)' : 'var(--danger)';
+            rProf.innerText = `${realProfit >= 0 ? '+' : '-'}$${Math.abs(realProfit).toFixed(2)}`;
+            rProf.style.color = realProfit >= 0 ? 'var(--success)' : 'var(--danger)';
             
             document.getElementById('receiptOwner').innerText = cardOwner.toUpperCase();
             document.getElementById('viewReceiptModal').style.display = 'flex';
@@ -633,7 +645,7 @@
         await updateDoc(doc(db, "obsidian_cards", id), {
             name: nm, buyPrice: b, collectrPrice: c,
             whereBought: wb,
-            payout: c * 0.85, profit: (c * 0.85) - b
+            payout: c * 0.80, profit: (c * 0.80) - b
         });
 
         closeAllModals(); showAlert("Updated");
